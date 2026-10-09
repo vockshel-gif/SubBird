@@ -69,3 +69,30 @@ npx serve .
 ```
 
 Open `http://localhost:8000` in your web browser.
+
+---
+
+## 🔒 Private Client Itinerary Publishing & Sharing (Zero Firebase)
+
+SunBird Lanka Tours includes a secure, zero-database publishing system to share classic or custom handmade PDFs directly with clients via GitHub Pages:
+
+### How It Works:
+1. **Private by Design:** Every document is assigned an unguessable 128-bit UUID. Directory browsing is strictly disabled so clients cannot view or guess other clients' itineraries.
+2. **Branded Client Portal (`view.html`):** Clients get a responsive, luxury mobile/desktop PDF viewer with direct WhatsApp inquiry and download buttons.
+
+### 2 Ways to Publish Any PDF:
+
+#### Option 1: 1-Click Desktop Shortcut (Fastest)
+1. Drag and drop any custom PDF (or generated classic quote) directly onto `Drag_PDF_Here_To_Publish.bat`.
+2. The script commits and pushes to GitHub, then **automatically copies the client link to your Windows clipboard** (`Ctrl + V`).
+3. Or run in terminal:
+   ```bash
+   python publish_itinerary.py "path/to/my_tour.pdf"
+   ```
+
+#### Option 2: Browser Upload in Itinerary Builder
+1. Open `itinerary-builder.html`.
+2. Click **"📤 Share / Upload PDF"** in the top navigation bar.
+3. Drag & drop any PDF or generate a link for your current itinerary.
+4. Copy the link or send directly to WhatsApp!
+
