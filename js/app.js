@@ -6987,6 +6987,20 @@
   let hubDeleteModal, modalDeleteCloseBtn, modalDeleteCancelBtn, modalDeleteConfirmBtn, deleteTargetNameEl;
   let btnReturnHub, editorActiveTitleEl;
 
+  // SunBird Cloud & Firebase Link Generation Elements
+  let hubBtnUploadPdf, btnGeneratePdfLink;
+  let hubPublishModal, modalPublishCloseBtn, modalPublishCancelBtn;
+  let modalTabBtnCurrent, modalTabBtnCustom, modalTabCurrent, modalTabCustom;
+  let pubCurrentItinTitle, pubCurrentItinMeta, btnStartPublishCurrent;
+  let customPdfTitleInput, hubPdfDropzone, hubPdfFileInput;
+  let hubSelectedFilePill, hubSelectedFileName, hubSelectedFileSize, hubRemoveSelectedFile;
+  let btnStartPublishCustom;
+  let hubPublishProgressWrap, hubPublishStatusLabel, hubPublishStatusPct, hubPublishProgressFill;
+  let hubPublishResultCard, hubGeneratedLinkInput, hubBtnCopyLink;
+  let hubBtnPreviewLink, hubBtnWhatsappShare, hubBtnLocalPreview;
+  let hubSelectedCustomFile = null;
+  let hubPublishTargetItin = null;
+
   function initItineraryHub() {
     // Cache Hub elements
     screenHub = document.getElementById('screen-hub');
@@ -7017,6 +7031,43 @@
     modalDeleteCancelBtn = document.getElementById('modal-delete-cancel-btn');
     modalDeleteConfirmBtn = document.getElementById('modal-delete-confirm-btn');
     deleteTargetNameEl = document.getElementById('delete-itin-target-name');
+
+    // SunBird Cloud & Firebase Link Generation Elements
+    hubBtnUploadPdf = document.getElementById('hub-btn-upload-pdf');
+    btnGeneratePdfLink = document.getElementById('btn-generate-pdf-link');
+    hubPublishModal = document.getElementById('hub-publish-modal');
+    modalPublishCloseBtn = document.getElementById('modal-publish-close-btn');
+    modalPublishCancelBtn = document.getElementById('modal-publish-cancel-btn');
+
+    modalTabBtnCurrent = document.getElementById('modal-tab-btn-current');
+    modalTabBtnCustom = document.getElementById('modal-tab-btn-custom');
+    modalTabCurrent = document.getElementById('modal-tab-current');
+    modalTabCustom = document.getElementById('modal-tab-custom');
+
+    pubCurrentItinTitle = document.getElementById('pub-current-itin-title');
+    pubCurrentItinMeta = document.getElementById('pub-current-itin-meta');
+    btnStartPublishCurrent = document.getElementById('btn-start-publish-current');
+
+    customPdfTitleInput = document.getElementById('custom-pdf-title-input');
+    hubPdfDropzone = document.getElementById('hub-pdf-dropzone');
+    hubPdfFileInput = document.getElementById('hub-pdf-file-input');
+    hubSelectedFilePill = document.getElementById('hub-selected-file-pill');
+    hubSelectedFileName = document.getElementById('hub-selected-file-name');
+    hubSelectedFileSize = document.getElementById('hub-selected-file-size');
+    hubRemoveSelectedFile = document.getElementById('hub-remove-selected-file');
+    btnStartPublishCustom = document.getElementById('btn-start-publish-custom');
+
+    hubPublishProgressWrap = document.getElementById('hub-publish-progress-wrap');
+    hubPublishStatusLabel = document.getElementById('hub-publish-status-label');
+    hubPublishStatusPct = document.getElementById('hub-publish-status-pct');
+    hubPublishProgressFill = document.getElementById('hub-publish-progress-fill');
+
+    hubPublishResultCard = document.getElementById('hub-publish-result-card');
+    hubGeneratedLinkInput = document.getElementById('hub-generated-link-input');
+    hubBtnCopyLink = document.getElementById('hub-btn-copy-link');
+    hubBtnPreviewLink = document.getElementById('hub-btn-preview-link');
+    hubBtnWhatsappShare = document.getElementById('hub-btn-whatsapp-share');
+    hubBtnLocalPreview = document.getElementById('hub-btn-local-preview');
 
     // Editor return button & title
     btnReturnHub = document.getElementById('btn-return-hub');
@@ -7523,6 +7574,9 @@
           </div>
           <div class="itin-card-header-right">
             <div class="itin-compact-actions">
+              <button type="button" class="btn-itin-action" data-link-id="${itin.id}" title="Generate Client Link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+              </button>
               <button type="button" class="btn-itin-action" data-dup-id="${itin.id}" title="Duplicate Itinerary">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               </button>
@@ -7559,6 +7613,9 @@
           <button type="button" class="btn-itin-open" data-open-id="${itin.id}">
             <span>Open in Editor</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+          <button type="button" class="btn-itin-action" data-link-id="${itin.id}" title="Generate Client Link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
           </button>
           <button type="button" class="btn-itin-action" data-dup-id="${itin.id}" title="Duplicate Itinerary">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -7652,6 +7709,15 @@
         });
       });
 
+      // Event listener: generate link
+      const linkBtns = card.querySelectorAll('[data-link-id]');
+      linkBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openPublishModal('current', itin.id);
+        });
+      });
+
       hubCardsGrid.appendChild(card);
     });
   }
@@ -7683,6 +7749,280 @@
   function closeDeleteModal() {
     if (hubDeleteModal) hubDeleteModal.style.display = 'none';
     hubPendingDeleteId = null;
+  }
+
+  // ── SunBird Cloud & Firebase Link Generation Helpers ──
+
+  function calculateEndDate(startDateStr, daysCount) {
+    if (!startDateStr) return '';
+    try {
+      const d = new Date(startDateStr);
+      if (isNaN(d.getTime())) return '';
+      d.setDate(d.getDate() + Math.max(0, daysCount - 1));
+      return d.toISOString().split('T')[0];
+    } catch(e) {
+      return '';
+    }
+  }
+
+  function openPublishModal(defaultTab = 'current', targetItinId = null) {
+    if (!hubPublishModal) return;
+
+    hubSelectedCustomFile = null;
+    if (hubPdfFileInput) hubPdfFileInput.value = '';
+    if (customPdfTitleInput) customPdfTitleInput.value = '';
+    if (hubSelectedFilePill) hubSelectedFilePill.style.display = 'none';
+    if (btnStartPublishCustom) btnStartPublishCustom.disabled = true;
+
+    // Reset progress & result card
+    if (hubPublishProgressWrap) hubPublishProgressWrap.style.display = 'none';
+    if (hubPublishResultCard) hubPublishResultCard.style.display = 'none';
+    if (btnStartPublishCurrent) btnStartPublishCurrent.disabled = false;
+
+    // Determine target itinerary
+    if (targetItinId) {
+      hubPublishTargetItin = hubItineraries.find(i => i.id === targetItinId);
+    } else if (hubActiveItinId) {
+      hubPublishTargetItin = hubItineraries.find(i => i.id === hubActiveItinId);
+    } else {
+      hubPublishTargetItin = hubItineraries[0] || null;
+    }
+
+    const title = (hubPublishTargetItin && hubPublishTargetItin.title) || state.title || 'Official Tour Itinerary';
+    const days = (hubPublishTargetItin && hubPublishTargetItin.days) || state.days || 1;
+    const nights = (hubPublishTargetItin && hubPublishTargetItin.nights) !== undefined ? hubPublishTargetItin.nights : state.nights;
+    const pax = (hubPublishTargetItin && hubPublishTargetItin.touristsCount) || state.touristsCount || 16;
+    const templateName = (state.activePdfVersion === 'classic') ? 'Classic Table Quotation' : 'Modern Luxury Edition';
+
+    if (pubCurrentItinTitle) pubCurrentItinTitle.textContent = title;
+    if (pubCurrentItinMeta) pubCurrentItinMeta.textContent = `${days} Days / ${nights} Nights • ${pax} Pax • ${templateName}`;
+
+    switchPublishModalTab(defaultTab);
+    hubPublishModal.style.display = 'flex';
+  }
+
+  function closePublishModal() {
+    if (hubPublishModal) hubPublishModal.style.display = 'none';
+  }
+
+  function switchPublishModalTab(tab) {
+    if (modalTabBtnCurrent) modalTabBtnCurrent.classList.toggle('active', tab === 'current');
+    if (modalTabBtnCustom) modalTabBtnCustom.classList.toggle('active', tab === 'custom');
+    if (modalTabCurrent) modalTabCurrent.style.display = tab === 'current' ? 'block' : 'none';
+    if (modalTabCustom) modalTabCustom.style.display = tab === 'custom' ? 'block' : 'none';
+  }
+
+  function handleCustomFileSelected(file) {
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+      showToast('Please select a valid PDF file (.pdf)');
+      return;
+    }
+    hubSelectedCustomFile = file;
+    if (hubSelectedFileName) hubSelectedFileName.textContent = file.name;
+    if (hubSelectedFileSize) {
+      const sizeKb = Math.round(file.size / 1024);
+      const sizeStr = sizeKb > 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`;
+      hubSelectedFileSize.textContent = `(${sizeStr})`;
+    }
+    if (hubSelectedFilePill) hubSelectedFilePill.style.display = 'inline-flex';
+    if (btnStartPublishCustom) btnStartPublishCustom.disabled = false;
+
+    // Suggest title if empty
+    if (customPdfTitleInput && !customPdfTitleInput.value.trim()) {
+      const suggested = file.name.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ');
+      customPdfTitleInput.value = suggested;
+    }
+  }
+
+  async function publishCurrentItinerary() {
+    if (!window.SunBirdFirebase) {
+      alert('Firebase service is not loaded.');
+      return;
+    }
+
+    const btn = btnStartPublishCurrent;
+    if (btn) btn.disabled = true;
+
+    if (hubPublishProgressWrap) hubPublishProgressWrap.style.display = 'flex';
+    if (hubPublishResultCard) hubPublishResultCard.style.display = 'none';
+
+    const updateProgress = (pct, label) => {
+      if (hubPublishProgressFill) hubPublishProgressFill.style.width = pct + '%';
+      if (hubPublishStatusPct) hubPublishStatusPct.textContent = pct + '%';
+      if (hubPublishStatusLabel && label) hubPublishStatusLabel.textContent = label;
+    };
+
+    try {
+      updateProgress(15, 'Preparing Itinerary Document...');
+
+      const targetTitle = (hubPublishTargetItin && hubPublishTargetItin.title) || state.title || 'SunBird Tour Itinerary';
+      let pdfBlob = null;
+
+      // Strategy 1: Check iframe or rendered page to generate live PDF using html2pdf
+      const iframe = document.getElementById('pdf-preview-iframe');
+      let capturedEl = null;
+      if (iframe && iframe.contentDocument) {
+        capturedEl = iframe.contentDocument.querySelector('.pdf-pages-container') || iframe.contentDocument.body;
+      }
+
+      if (window.html2pdf && capturedEl) {
+        updateProgress(35, 'Rendering Vector PDF Canvas...');
+        try {
+          pdfBlob = await window.html2pdf().set({
+            margin: 0,
+            filename: `${targetTitle.replace(/[^a-zA-Z0-9_\-]/g, '_')}.pdf`,
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 1.5, useCORS: true, logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(capturedEl).outputPdf('blob');
+        } catch(canvasErr) {
+          console.warn('html2pdf render fallback triggered:', canvasErr);
+        }
+      }
+
+      // Strategy 2: Fallback to existing static PDF file in repository
+      if (!pdfBlob) {
+        updateProgress(45, 'Loading Document Binary...');
+        const staticPdf = (state.activePdfVersion === 'classic') ? 'SunBird_Lanka_Tours_Itinerary_Classic.pdf' : 'SunBird_Lanka_Tours_Itinerary_Modern.pdf';
+        try {
+          const resp = await fetch(staticPdf);
+          if (resp.ok) {
+            pdfBlob = await resp.blob();
+          }
+        } catch(fetchErr) {
+          console.warn('Fetch fallback triggered:', fetchErr);
+        }
+      }
+
+      if (!pdfBlob) {
+        throw new Error('Unable to construct PDF document blob.');
+      }
+
+      updateProgress(65, 'Uploading to Firebase Storage...');
+
+      const uploadResult = await window.SunBirdFirebase.uploadPDF(pdfBlob, null, (pct) => {
+        const mapped = Math.round(65 + (pct * 0.25));
+        updateProgress(mapped, `Uploading to Firebase Storage (${pct}%)...`);
+      });
+
+      updateProgress(92, 'Registering in Cloud Realtime Database...');
+
+      const itinData = hubPublishTargetItin || state;
+      const daysCount = itinData.days || 1;
+      const arrivalDateStr = itinData.arrivalDate || '';
+      const toDateStr = arrivalDateStr ? calculateEndDate(arrivalDateStr, daysCount) : '';
+
+      await window.SunBirdFirebase.saveRecord({
+        id: uploadResult.id,
+        title: targetTitle,
+        type: 'current_generated',
+        pdfUrl: uploadResult.downloadUrl,
+        from: arrivalDateStr,
+        to: toDateStr,
+        adults: itinData.touristsCount || 16,
+        data: {
+          days: daysCount,
+          nights: itinData.nights !== undefined ? itinData.nights : Math.max(0, daysCount - 1),
+          routeMode: itinData.routeMode,
+          templateVersion: state.activePdfVersion
+        }
+      });
+
+      updateProgress(100, 'Published successfully!');
+
+      const clientLink = window.SunBirdFirebase.getClientLink(uploadResult.id);
+      showPublishSuccess(clientLink, uploadResult.id, targetTitle);
+
+    } catch (err) {
+      console.error('Publish error:', err);
+      alert('Error publishing itinerary: ' + (err.message || err));
+      if (btn) btn.disabled = false;
+      if (hubPublishProgressWrap) hubPublishProgressWrap.style.display = 'none';
+    }
+  }
+
+  async function publishCustomPDF() {
+    if (!hubSelectedCustomFile) {
+      showToast('Please select a PDF file first');
+      return;
+    }
+    if (!window.SunBirdFirebase) {
+      alert('Firebase service is not loaded.');
+      return;
+    }
+
+    const btn = btnStartPublishCustom;
+    if (btn) btn.disabled = true;
+
+    if (hubPublishProgressWrap) hubPublishProgressWrap.style.display = 'flex';
+    if (hubPublishResultCard) hubPublishResultCard.style.display = 'none';
+
+    const updateProgress = (pct, label) => {
+      if (hubPublishProgressFill) hubPublishProgressFill.style.width = pct + '%';
+      if (hubPublishStatusPct) hubPublishStatusPct.textContent = pct + '%';
+      if (hubPublishStatusLabel && label) hubPublishStatusLabel.textContent = label;
+    };
+
+    try {
+      updateProgress(15, 'Preparing Handmade PDF Document...');
+      const file = hubSelectedCustomFile;
+      const title = (customPdfTitleInput && customPdfTitleInput.value.trim()) || file.name.replace(/\.pdf$/i, '');
+
+      updateProgress(40, 'Uploading to Firebase Storage...');
+
+      const uploadResult = await window.SunBirdFirebase.uploadPDF(file, null, (pct) => {
+        const mapped = Math.round(40 + (pct * 0.5));
+        updateProgress(mapped, `Uploading to Firebase Storage (${pct}%)...`);
+      });
+
+      updateProgress(92, 'Registering Itinerary in Cloud Database...');
+
+      await window.SunBirdFirebase.saveRecord({
+        id: uploadResult.id,
+        title: title,
+        type: 'custom_pdf',
+        pdfUrl: uploadResult.downloadUrl,
+        clientName: title,
+        fileName: file.name
+      });
+
+      updateProgress(100, 'Published successfully!');
+
+      const clientLink = window.SunBirdFirebase.getClientLink(uploadResult.id);
+      showPublishSuccess(clientLink, uploadResult.id, title);
+
+    } catch (err) {
+      console.error('Publish error:', err);
+      alert('Error uploading PDF: ' + (err.message || err));
+      if (btn) btn.disabled = false;
+      if (hubPublishProgressWrap) hubPublishProgressWrap.style.display = 'none';
+    }
+  }
+
+  function showPublishSuccess(clientLink, id, title) {
+    if (hubPublishProgressWrap) hubPublishProgressWrap.style.display = 'none';
+    if (hubPublishResultCard) hubPublishResultCard.style.display = 'flex';
+
+    if (hubGeneratedLinkInput) {
+      hubGeneratedLinkInput.value = clientLink;
+      hubGeneratedLinkInput.select();
+    }
+
+    if (hubBtnPreviewLink) {
+      hubBtnPreviewLink.href = clientLink;
+    }
+
+    if (hubBtnLocalPreview) {
+      hubBtnLocalPreview.href = window.SunBirdFirebase.getClientLink(id, true);
+    }
+
+    if (hubBtnWhatsappShare) {
+      const msg = encodeURIComponent(`Hello! Here is your official SunBird Lanka Tours itinerary for "${title}":\n${clientLink}\n\nPlease review and let us know if you need any adjustments.`);
+      hubBtnWhatsappShare.href = `https://wa.me/?text=${msg}`;
+    }
+
+    showToast('Client link generated successfully!');
   }
 
   function setupHubEventListeners() {
@@ -7864,11 +8204,122 @@
       }
     });
 
+    // 7b. SunBird Cloud & Firebase Link Generation Controls
+    if (hubBtnUploadPdf) {
+      hubBtnUploadPdf.addEventListener('click', () => {
+        openPublishModal('custom');
+      });
+    }
+
+    if (btnGeneratePdfLink) {
+      btnGeneratePdfLink.addEventListener('click', () => {
+        openPublishModal('current');
+      });
+    }
+
+    if (modalPublishCloseBtn) {
+      modalPublishCloseBtn.addEventListener('click', closePublishModal);
+    }
+    if (modalPublishCancelBtn) {
+      modalPublishCancelBtn.addEventListener('click', closePublishModal);
+    }
+
+    if (modalTabBtnCurrent) {
+      modalTabBtnCurrent.addEventListener('click', () => switchPublishModalTab('current'));
+    }
+    if (modalTabBtnCustom) {
+      modalTabBtnCustom.addEventListener('click', () => switchPublishModalTab('custom'));
+    }
+
+    if (btnStartPublishCurrent) {
+      btnStartPublishCurrent.addEventListener('click', publishCurrentItinerary);
+    }
+    if (btnStartPublishCustom) {
+      btnStartPublishCustom.addEventListener('click', publishCustomPDF);
+    }
+
+    // Custom PDF Dropzone events
+    if (hubPdfDropzone) {
+      hubPdfDropzone.addEventListener('click', (e) => {
+        if (e.target.closest('#hub-remove-selected-file')) return;
+        if (hubPdfFileInput) hubPdfFileInput.click();
+      });
+
+      hubPdfDropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        hubPdfDropzone.classList.add('dragover');
+      });
+
+      hubPdfDropzone.addEventListener('dragleave', () => {
+        hubPdfDropzone.classList.remove('dragover');
+      });
+
+      hubPdfDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        hubPdfDropzone.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleCustomFileSelected(e.dataTransfer.files[0]);
+        }
+      });
+    }
+
+    if (hubPdfFileInput) {
+      hubPdfFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          handleCustomFileSelected(e.target.files[0]);
+        }
+      });
+    }
+
+    if (hubRemoveSelectedFile) {
+      hubRemoveSelectedFile.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hubSelectedCustomFile = null;
+        if (hubPdfFileInput) hubPdfFileInput.value = '';
+        if (hubSelectedFilePill) hubSelectedFilePill.style.display = 'none';
+        if (btnStartPublishCustom) btnStartPublishCustom.disabled = true;
+      });
+    }
+
+    if (hubBtnCopyLink) {
+      hubBtnCopyLink.addEventListener('click', () => {
+        if (hubGeneratedLinkInput && hubGeneratedLinkInput.value) {
+          const textToCopy = hubGeneratedLinkInput.value;
+          const copyFeedback = () => {
+            const originalHTML = hubBtnCopyLink.innerHTML;
+            hubBtnCopyLink.innerHTML = `
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Copied!</span>
+            `;
+            showToast('Link copied to clipboard!');
+            setTimeout(() => {
+              hubBtnCopyLink.innerHTML = originalHTML;
+            }, 2500);
+          };
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(textToCopy).then(copyFeedback).catch(() => {
+              hubGeneratedLinkInput.select();
+              document.execCommand('copy');
+              copyFeedback();
+            });
+          } else {
+            hubGeneratedLinkInput.select();
+            document.execCommand('copy');
+            copyFeedback();
+          }
+        }
+      });
+    }
+
     // Close modals on Escape key
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeCreateModal();
         closeDeleteModal();
+        closePublishModal();
       }
     });
 
@@ -7883,6 +8334,11 @@
         if (e.target === hubDeleteModal) closeDeleteModal();
       });
     }
+    if (hubPublishModal) {
+      hubPublishModal.addEventListener('click', (e) => {
+        if (e.target === hubPublishModal) closePublishModal();
+      });
+    }
   }
 
   // Export functions to global scope for debugging & test hooks
@@ -7892,5 +8348,7 @@
   window.initItineraryHub = initItineraryHub;
   window.saveCurrentItineraryToStorage = saveCurrentItineraryToStorage;
   window.syncLiveItineraryToStorage = syncLiveItineraryToStorage;
+  window.openPublishModal = openPublishModal;
+  window.closePublishModal = closePublishModal;
 
 })();

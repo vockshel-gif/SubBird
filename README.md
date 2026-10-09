@@ -72,27 +72,15 @@ Open `http://localhost:8000` in your web browser.
 
 ---
 
-## 🔒 Private Client Itinerary Publishing & Sharing (Zero Firebase)
+## ☁️ Client Itinerary Publishing & Link Generation (Firebase Cloud)
 
-SunBird Lanka Tours includes a secure, zero-database publishing system to share classic or custom handmade PDFs directly with clients via GitHub Pages:
+SunBird Lanka Tours features a client link generation system powered by Google Firebase (Storage + Realtime Database) and hosted via GitHub Pages:
 
 ### How It Works:
-1. **Private by Design:** Every document is assigned an unguessable 128-bit UUID. Directory browsing is strictly disabled so clients cannot view or guess other clients' itineraries.
-2. **Branded Client Portal (`view.html`):** Clients get a responsive, luxury mobile/desktop PDF viewer with direct WhatsApp inquiry and download buttons.
-
-### 2 Ways to Publish Any PDF:
-
-#### Option 1: 1-Click Desktop Shortcut (Fastest)
-1. Drag and drop any custom PDF (or generated classic quote) directly onto `Drag_PDF_Here_To_Publish.bat`.
-2. The script commits and pushes to GitHub, then **automatically copies the client link to your Windows clipboard** (`Ctrl + V`).
-3. Or run in terminal:
-   ```bash
-   python publish_itinerary.py "path/to/my_tour.pdf"
-   ```
-
-#### Option 2: Browser Upload in Itinerary Builder
-1. Open `itinerary-builder.html`.
-2. Click **"📤 Share / Upload PDF"** in the top navigation bar.
-3. Drag & drop any PDF or generate a link for your current itinerary.
-4. Copy the link or send directly to WhatsApp!
+1. **Isolated & Private by Design:** Every document is assigned an unguessable UUIDv4. There is no directory listing; clients can only view their designated quotation via single-record lookup.
+2. **Branded Client Portal (`view.html`):** Hosted on `https://vockshel-gif.github.io/SubBirdLanka/view.html?id=<UUID>`. Includes a responsive PDF viewer, direct WhatsApp inquiry, call consultant, and PDF download buttons.
+3. **1-Click Publishing:**
+   - **From Editor PDF View (`index.html`):** Click **🔗 Generate Link** to automatically render and upload your live itinerary to Firebase.
+   - **From Hub Header (`index.html`):** Click **Upload Custom PDF** to upload handmade PDFs (flight tickets, custom vouchers, quotes).
+   - **From Itinerary Builder (`itinerary-builder.html`):** Click **🔗 Generate Link** in the top action bar to publish the classic tabular quotation.
 
