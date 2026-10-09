@@ -7940,6 +7940,38 @@ html, body {
   transform: translateY(-1px);
 }
 
+.hub-btn-share-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 38px;
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border: 1.5px solid rgba(139, 92, 246, 0.5);
+  padding: 0 1.25rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.hub-btn-share-pdf svg {
+  width: 15px;
+  height: 15px;
+}
+
+.hub-btn-share-pdf:hover {
+  background: rgba(139, 92, 246, 0.32);
+  border-color: #a78bfa;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.45);
+  transform: translateY(-1px);
+}
+
 .hub-btn-delete-all {
   display: inline-flex;
   align-items: center;

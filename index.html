@@ -60,6 +60,14 @@
           </svg>
           <span>Create Itinerary</span>
         </button>
+        <button type="button" class="hub-btn-share-pdf" id="hub-btn-share-pdf" onclick="openHubPdfModal()" title="Upload Custom PDF & Generate Private Client Link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>Upload / Share PDF</span>
+        </button>
         <button type="button" class="hub-btn-delete-all" id="hub-btn-delete-all" title="Delete all itineraries">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"></polyline>
@@ -242,6 +250,101 @@
             </svg>
             <span>Delete Permanently</span>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload & Share Tour PDF Modal -->
+    <div class="hub-modal-backdrop" id="hub-share-pdf-modal" style="display: none;">
+      <div class="hub-modal-card modal-md" style="max-width: 620px; width: 95%;">
+        <div class="hub-modal-header">
+          <div class="modal-title-group">
+            <h3 class="modal-title">Upload &amp; Share Tour PDF</h3>
+            <p class="modal-subtitle">Generate a private client link for any custom or classic itinerary PDF</p>
+          </div>
+          <button type="button" class="modal-close-btn" onclick="closeHubPdfModal()" title="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="hub-modal-body" style="padding: 20px;">
+          <!-- Drop zone -->
+          <div id="hub-pdf-dropzone" style="border: 2px dashed rgba(56, 189, 248, 0.45); border-radius: 10px; padding: 28px 20px; text-align: center; background: rgba(15, 23, 42, 0.7); cursor: pointer; transition: all 0.2s;" onclick="document.getElementById('hub-pdf-file-input').click()">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">📁</div>
+            <div style="font-weight: 700; color: #38bdf8; font-size: 0.96rem; margin-bottom: 4px;">
+              Click to choose or drag &amp; drop any PDF
+            </div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">
+              Supports handmade quotes, Canva itineraries, or exported tour PDFs (.pdf)
+            </div>
+            <input type="file" id="hub-pdf-file-input" accept=".pdf" style="display: none;" onchange="handleHubPdfSelected(this)">
+          </div>
+
+          <!-- File Info -->
+          <div id="hub-file-info" style="display: none; margin-top: 12px; padding: 10px 14px; background: #0f1520; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); font-size: 0.84rem;">
+            <span style="color: #10b981; font-weight: 700;">✓ Selected: </span>
+            <span id="hub-file-name" style="color: #fff; font-weight: 600;"></span>
+            <span id="hub-file-size" style="color: #94a3b8; margin-left: 6px;"></span>
+          </div>
+
+          <!-- Generated Link Box -->
+          <div id="hub-link-result-box" style="display: none; background: #0b1120; border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px; padding: 14px; margin-top: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 0.75rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">
+                🔒 Client Private Link Ready:
+              </span>
+              <span id="hub-token-preview" style="font-size: 0.72rem; color: #94a3b8;"></span>
+            </div>
+            <div id="hub-link-url" style="font-family: monospace; font-size: 0.84rem; color: #38bdf8; word-break: break-all; background: rgba(0,0,0,0.5); padding: 8px 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.08); user-select: all; margin-bottom: 12px;"></div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="hub-btn-new-itin" onclick="copyHubLink()" style="height: 34px; padding: 0 14px; font-size: 0.82rem;">
+                📋 Copy Link
+              </button>
+              <a id="hub-btn-wa" href="#" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: #128c7e; color: #fff; padding: 0 14px; font-size: 0.82rem; font-weight: 700; border-radius: 8px; text-decoration: none; height: 34px;">
+                💬 Send on WhatsApp
+              </a>
+              <a id="hub-btn-preview" href="#" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: #334155; color: #e2e8f0; padding: 0 14px; font-size: 0.82rem; font-weight: 700; border-radius: 8px; text-decoration: none; height: 34px;">
+                👁️ Preview
+              </a>
+              <button type="button" onclick="downloadHubFileAsUuid()" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #94a3b8; border: 1px solid rgba(255,255,255,0.15); padding: 0 12px; font-size: 0.82rem; font-weight: 600; border-radius: 8px; cursor: pointer; height: 34px;">
+                📥 Save as UUID PDF
+              </button>
+            </div>
+          </div>
+
+          <!-- Direct GitHub Push Option -->
+          <div style="margin-top: 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px 14px; font-size: 0.82rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleHubGhSettings()">
+              <span style="font-weight: 700; color: #38bdf8;">⚡ Direct 1-Click Push to GitHub (Optional)</span>
+              <span id="hub-gh-toggle-icon" style="color: #94a3b8; font-size: 0.8rem;">▼</span>
+            </div>
+            <div id="hub-gh-settings-content" style="display: none; margin-top: 10px;">
+              <p style="color: #94a3b8; font-size: 0.78rem; margin-bottom: 8px;">
+                Save your GitHub Personal Access Token once to push PDFs directly from this web page without opening any terminal.
+              </p>
+              <div style="display: flex; gap: 8px;">
+                <input type="password" id="hub-gh-token-input" placeholder="github_pat_... (Stored locally only)" style="flex: 1; background: #0b1120; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 0.8rem;">
+                <button type="button" class="hub-btn-new-itin" onclick="saveHubGhToken()" style="height: 32px; padding: 0 12px; font-size: 0.8rem;">Save Token</button>
+              </div>
+              <button type="button" id="hub-btn-direct-gh-upload" class="hub-btn-new-itin" onclick="uploadHubDirectToGitHub()" style="margin-top: 10px; width: 100%; justify-content: center; display: none; background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #6ee7b7;">
+                🚀 Upload PDF Direct to GitHub Repository
+              </button>
+              <div id="hub-gh-upload-status" style="margin-top: 6px; font-size: 0.8rem;"></div>
+            </div>
+          </div>
+
+          <!-- Desktop Helper Note -->
+          <div style="margin-top: 12px; padding: 10px 14px; background: rgba(59,130,246,0.1); border-radius: 6px; border: 1px solid rgba(59,130,246,0.2); font-size: 0.8rem; color: #93c5fd;">
+            💡 <strong>Desktop Shortcut:</strong> You can also drag &amp; drop any PDF onto <code>Drag_PDF_Here_To_Publish.bat</code> in the SunBird project folder to publish in 3 seconds!
+          </div>
+        </div>
+
+        <div class="hub-modal-footer">
+          <button type="button" class="btn-modal-cancel" onclick="closeHubPdfModal()">Close</button>
         </div>
       </div>
     </div>
@@ -811,6 +914,14 @@
                     </svg>
                     <span>Print / Save</span>
                   </button>
+                  <button type="button" class="pdf-download-btn-secondary" id="btn-share-pdf-live" onclick="openHubPdfModal()" title="Upload & Generate Client Link" style="background: rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.5); color: #c4b5fd;">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Upload / Share</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1082,5 +1193,249 @@
   <script src="js/vehicle-showcase.js"></script>
   <!-- Main Timeline Application Logic -->
   <script src="js/app.js"></script>
+
+  <!-- Hub PDF Share & Upload Handler -->
+  <script>
+  (function() {
+    const GITHUB_REPO_OWNER = 'vockshel-gif';
+    const GITHUB_REPO_NAME = 'SubBird';
+    let hubSelectedPdfFile = null;
+    let hubActiveUploadUuid = null;
+
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    function getBaseViewerUrl() {
+      if (window.location.hostname.includes('github.io')) {
+        const pathParts = window.location.pathname.split('/').filter(p => p.length > 0);
+        const repo = pathParts[0] || GITHUB_REPO_NAME;
+        return `${window.location.origin}/${repo}/view.html?id=`;
+      }
+      return `https://${GITHUB_REPO_OWNER}.github.io/${GITHUB_REPO_NAME}/view.html?id=`;
+    }
+
+    function showHubToast(msg) {
+      const el = document.getElementById('toast');
+      if (el) {
+        const textEl = el.querySelector('.toast-message');
+        if (textEl) textEl.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3200);
+      } else {
+        alert(msg);
+      }
+    }
+
+    window.openHubPdfModal = function() {
+      const modal = document.getElementById('hub-share-pdf-modal');
+      if (modal) modal.style.display = 'flex';
+      const token = localStorage.getItem('sunbird_gh_token');
+      if (token) {
+        const input = document.getElementById('hub-gh-token-input');
+        if (input) input.value = token;
+        const btn = document.getElementById('hub-btn-direct-gh-upload');
+        if (btn && hubSelectedPdfFile) btn.style.display = 'inline-flex';
+      }
+    };
+
+    window.closeHubPdfModal = function() {
+      const modal = document.getElementById('hub-share-pdf-modal');
+      if (modal) modal.style.display = 'none';
+    };
+
+    function processHubPdf(file) {
+      if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
+        showHubToast('⚠️ Please select a valid PDF file (.pdf)');
+        return;
+      }
+      hubSelectedPdfFile = file;
+      hubActiveUploadUuid = generateUUID();
+
+      const infoBox = document.getElementById('hub-file-info');
+      if (infoBox) infoBox.style.display = 'block';
+      const nameEl = document.getElementById('hub-file-name');
+      if (nameEl) nameEl.textContent = file.name;
+      const sizeEl = document.getElementById('hub-file-size');
+      if (sizeEl) sizeEl.textContent = '(' + (file.size / 1024).toFixed(1) + ' KB)';
+
+      const viewerUrl = getBaseViewerUrl() + hubActiveUploadUuid;
+      const resultBox = document.getElementById('hub-link-result-box');
+      if (resultBox) resultBox.style.display = 'block';
+      const linkUrl = document.getElementById('hub-link-url');
+      if (linkUrl) linkUrl.textContent = viewerUrl;
+      const tokenPrev = document.getElementById('hub-token-preview');
+      if (tokenPrev) tokenPrev.textContent = 'ID: ' + hubActiveUploadUuid.substring(0, 8);
+
+      const waBtn = document.getElementById('hub-btn-wa');
+      if (waBtn) {
+        const waText = encodeURIComponent('Hello! Here is your official tour itinerary from SunBird Lanka Tours: ' + viewerUrl);
+        waBtn.href = 'https://wa.me/94766800130?text=' + waText;
+      }
+
+      const prevBtn = document.getElementById('hub-btn-preview');
+      if (prevBtn) {
+        prevBtn.href = 'view.html?id=' + hubActiveUploadUuid;
+      }
+
+      const token = localStorage.getItem('sunbird_gh_token');
+      const uploadBtn = document.getElementById('hub-btn-direct-gh-upload');
+      if (uploadBtn && token) {
+        uploadBtn.style.display = 'inline-flex';
+      }
+
+      showHubToast('🔒 Unique private link generated!');
+    }
+
+    window.handleHubPdfSelected = function(input) {
+      if (input.files && input.files[0]) {
+        processHubPdf(input.files[0]);
+      }
+    };
+
+    window.copyHubLink = function() {
+      const el = document.getElementById('hub-link-url');
+      const url = el ? el.textContent : '';
+      if (url) {
+        navigator.clipboard.writeText(url).then(() => {
+          showHubToast('📋 Client link copied to clipboard!');
+        }).catch(() => {
+          prompt('Copy this client link:', url);
+        });
+      }
+    };
+
+    window.downloadHubFileAsUuid = function() {
+      if (!hubSelectedPdfFile || !hubActiveUploadUuid) {
+        showHubToast('⚠️ Please choose a PDF file first');
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(hubSelectedPdfFile);
+      a.download = hubActiveUploadUuid + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showHubToast('💾 Downloaded as ' + hubActiveUploadUuid.substring(0, 8) + '.pdf');
+    };
+
+    window.toggleHubGhSettings = function() {
+      const content = document.getElementById('hub-gh-settings-content');
+      const icon = document.getElementById('hub-gh-toggle-icon');
+      if (!content) return;
+      const isHidden = content.style.display === 'none';
+      content.style.display = isHidden ? 'block' : 'none';
+      if (icon) icon.textContent = isHidden ? '▲' : '▼';
+    };
+
+    window.saveHubGhToken = function() {
+      const input = document.getElementById('hub-gh-token-input');
+      const val = input ? input.value.trim() : '';
+      if (val) {
+        localStorage.setItem('sunbird_gh_token', val);
+        showHubToast('✅ GitHub Token saved locally');
+        if (hubSelectedPdfFile) {
+          const btn = document.getElementById('hub-btn-direct-gh-upload');
+          if (btn) btn.style.display = 'inline-flex';
+        }
+      } else {
+        localStorage.removeItem('sunbird_gh_token');
+        showHubToast('Token cleared');
+        const btn = document.getElementById('hub-btn-direct-gh-upload');
+        if (btn) btn.style.display = 'none';
+      }
+    };
+
+    window.uploadHubDirectToGitHub = function() {
+      const token = localStorage.getItem('sunbird_gh_token');
+      if (!token) {
+        showHubToast('⚠️ Please enter and save your GitHub Token first');
+        return;
+      }
+      if (!hubSelectedPdfFile || !hubActiveUploadUuid) {
+        showHubToast('⚠️ Please choose a PDF file first');
+        return;
+      }
+
+      const statusEl = document.getElementById('hub-gh-upload-status');
+      if (statusEl) statusEl.innerHTML = '<span style="color:#38bdf8;">⏳ Uploading PDF to GitHub repository...</span>';
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Data = e.target.result.split(',')[1];
+        const apiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/itineraries/${hubActiveUploadUuid}.pdf`;
+
+        fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Publish tour itinerary asset [ref: ' + hubActiveUploadUuid.substring(0, 8) + ']',
+            content: base64Data
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.content) {
+            if (statusEl) statusEl.innerHTML = '<span style="color:#10b981;font-weight:700;">✅ Uploaded successfully! Document is live on GitHub Pages.</span>';
+            showHubToast('🎉 Successfully published to GitHub!');
+          } else {
+            if (statusEl) statusEl.innerHTML = '<span style="color:#ef4444;">❌ GitHub API error: ' + (data.message || 'Check token permissions') + '</span>';
+          }
+        })
+        .catch(err => {
+          if (statusEl) statusEl.innerHTML = '<span style="color:#ef4444;">❌ Network error: ' + err.message + '</span>';
+        });
+      };
+      reader.readAsDataURL(hubSelectedPdfFile);
+    };
+
+    // Attach Drag and Drop and Modal closing listeners
+    window.addEventListener('DOMContentLoaded', () => {
+      const dropZone = document.getElementById('hub-pdf-dropzone');
+      if (dropZone) {
+        ['dragenter', 'dragover'].forEach(name => {
+          dropZone.addEventListener(name, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.style.borderColor = '#10b981';
+            dropZone.style.background = 'rgba(16, 185, 129, 0.12)';
+          });
+        });
+        ['dragleave', 'drop'].forEach(name => {
+          dropZone.addEventListener(name, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.style.borderColor = 'rgba(56, 189, 248, 0.45)';
+            dropZone.style.background = 'rgba(15, 23, 42, 0.7)';
+          });
+        });
+        dropZone.addEventListener('drop', (e) => {
+          if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+            processHubPdf(e.dataTransfer.files[0]);
+          }
+        });
+      }
+
+      const modal = document.getElementById('hub-share-pdf-modal');
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeHubPdfModal();
+        });
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeHubPdfModal();
+      });
+    });
+  })();
+  </script>
 </body>
 </html>
