@@ -2,28 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
   <title>SunBird Lanka Tours — Official Tour Itinerary</title>
   <link rel="icon" type="image/png" href="Logo/Logo1.png">
+
+  <!-- PDF.js library (Local with CDN fallback) -->
+  <script src="js/lib/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'js/lib/pdf.worker.min.js';
+    } else {
+      // CDN Fallback
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"><\/script>');
+      document.write('<script>pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";<\/script>');
+    }
+  </script>
+
   <style>
     :root {
       --bg: #0b1120;
       --card-bg: #1e293b;
-      --header-bg: #0f172a;
+      --header-bg: rgba(15, 23, 42, 0.96);
       --accent: #2563eb;
       --accent-hover: #1d4ed8;
       --cyan: #38bdf8;
-      --gold: #f59e0b;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --border: rgba(255, 255, 255, 0.12);
-      --success: #10b981;
+      --wa-green: #25D366;
+      --wa-hover: #128c7e;
     }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background: var(--bg);
@@ -34,55 +49,61 @@
       overflow-x: hidden;
     }
 
-    /* ── Header ── */
+    /* ── Sticky Luxury Header ── */
     .viewer-header {
       background: var(--header-bg);
+      backdrop-filter: blur(12px);
       border-bottom: 2px solid #2773b7;
-      padding: 10px 20px;
+      padding: 10px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
       position: sticky;
       top: 0;
-      z-index: 100;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+      gap: 12px;
     }
+
     .brand-section {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       text-decoration: none;
       color: inherit;
+      flex-shrink: 0;
     }
+
     .brand-logo {
-      height: 44px;
+      height: 40px;
       width: auto;
       object-fit: contain;
     }
+
     .brand-text h1 {
-      font-size: 1.15rem;
+      font-size: 1.08rem;
       font-weight: 800;
       color: #fff;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
+
     .brand-badge {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       background: rgba(56, 189, 248, 0.15);
       color: var(--cyan);
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
       border: 1px solid rgba(56, 189, 248, 0.35);
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
     }
+
     .brand-sub {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       margin-top: 1px;
     }
@@ -91,43 +112,47 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
+
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 8px 16px;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
       border-radius: 6px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       text-decoration: none;
       cursor: pointer;
       border: none;
       transition: all 0.2s ease;
       font-family: inherit;
+      white-space: nowrap;
     }
-    .btn-download {
-      background: #2563eb;
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3);
-    }
-    .btn-download:hover {
-      background: #1d4ed8;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
-    }
+
     .btn-whatsapp {
       background: #128c7e;
       color: #fff;
-      box-shadow: 0 2px 10px rgba(18, 140, 126, 0.3);
+      box-shadow: 0 2px 8px rgba(18, 140, 126, 0.35);
     }
     .btn-whatsapp:hover {
       background: #075e54;
       transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(18, 140, 126, 0.45);
     }
+
+    .btn-download {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    }
+    .btn-download:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
     .btn-secondary {
       background: #334155;
       color: #e2e8f0;
@@ -137,114 +162,190 @@
       background: #475569;
     }
 
-    /* ── Main Container ── */
-    .viewer-container {
+    /* ── Floating Controls Bar (Zoom & Page info) ── */
+    .toolbar-sub {
+      background: #111827;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      position: sticky;
+      top: 62px;
+      z-index: 900;
+    }
+
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-icon {
+      background: #1f2937;
+      color: #e5e7eb;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.9rem;
+      transition: all 0.15s;
+    }
+    .btn-icon:hover {
+      background: #374151;
+      color: #fff;
+    }
+
+    .zoom-label {
+      min-width: 44px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.78rem;
+    }
+
+    .page-counter-badge {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--cyan);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    /* ── Document Container ── */
+    .document-viewport {
       flex: 1;
+      width: 100%;
+      background: #1a202c;
+      padding: 20px 12px 60px;
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 68px);
-      position: relative;
-      background: #1a202c;
-    }
-
-    /* Mobile Notice Bar */
-    .mobile-bar {
-      display: none;
-      background: #1e3a8a;
-      color: #e0e7ff;
-      padding: 8px 16px;
-      font-size: 0.82rem;
-      text-align: center;
-      justify-content: center;
       align-items: center;
-      gap: 10px;
-    }
-    .mobile-bar a {
-      color: #fff;
-      font-weight: 700;
-      text-decoration: underline;
+      gap: 24px;
+      min-height: calc(100vh - 110px);
     }
 
-    /* PDF Frame */
-    .pdf-embed-wrapper {
-      flex: 1;
+    /* Individual A4 Page Card */
+    .page-card {
       width: 100%;
-      height: 100%;
-      background: #2d3748;
+      max-width: 860px;
+      background: #ffffff;
+      border-radius: 4px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       position: relative;
-    }
-    .pdf-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-      background: #fff;
+      overflow: hidden;
+      transition: transform 0.2s ease;
     }
 
-    /* ── Error / Not Found Screen ── */
+    .page-card canvas {
+      width: 100% !important;
+      height: auto !important;
+      display: block;
+    }
+
+    .page-num-tag {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      color: #f1f5f9;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    /* Loading Spinner */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3.5px solid rgba(56, 189, 248, 0.2);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    /* ── Not Found / Error Screen ── */
     .not-found-card {
       display: none;
-      max-width: 520px;
-      margin: 80px auto;
+      max-width: 500px;
+      width: 90%;
+      margin: 60px auto;
       background: var(--card-bg);
       border: 1.5px solid var(--border);
       border-radius: 12px;
-      padding: 36px 32px;
+      padding: 36px 28px;
       text-align: center;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
     }
     .not-found-icon {
       font-size: 3rem;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .not-found-card h2 {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       color: #f87171;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .not-found-card p {
       color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
-      margin-bottom: 24px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      margin-bottom: 22px;
     }
     .contact-box {
       background: rgba(15, 23, 42, 0.6);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 24px;
+      padding: 14px;
+      margin-bottom: 22px;
       text-align: left;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
+      color: #cbd5e1;
     }
     .contact-row {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 8px;
-      color: #cbd5e1;
     }
     .contact-row:last-child {
       margin-bottom: 0;
     }
 
-    /* ── Bottom Floating Bar (Mobile-friendly) ── */
-    .floating-bar {
-      display: none;
-      position: fixed;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: 50px;
-      padding: 8px 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-      z-index: 99;
-      gap: 10px;
-    }
-
+    /* ── Mobile Responsive Adjustments ── */
     @media (max-width: 768px) {
       .viewer-header {
         padding: 8px 12px;
@@ -252,21 +353,36 @@
       .brand-sub {
         display: none;
       }
-      .header-actions .btn-secondary {
+      .brand-badge {
         display: none;
       }
-      .mobile-bar {
-        display: flex;
+      .brand-logo {
+        height: 34px;
       }
-      .floating-bar {
-        display: flex;
+      .brand-text h1 {
+        font-size: 0.96rem;
+      }
+      .btn {
+        padding: 7px 11px;
+        font-size: 0.78rem;
+      }
+      .btn-secondary {
+        display: none;
+      }
+      .document-viewport {
+        padding: 12px 6px 40px;
+        gap: 14px;
+      }
+      .page-card {
+        border-radius: 2px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Top Sticky Header -->
   <header class="viewer-header">
     <a href="index.html" class="brand-section">
       <img src="Logo/Logo1.png" alt="SunBird Lanka Tours" class="brand-logo" onerror="this.style.display='none'">
@@ -292,31 +408,38 @@
     </div>
   </header>
 
-  <!-- Notice for mobile devices -->
-  <div class="mobile-bar" id="mobile-bar">
-    <span>Viewing on mobile? If document does not show,</span>
-    <a id="mobile-download-link" href="#" target="_blank">Tap here to open PDF directly</a>
-  </div>
-
-  <!-- Viewer Container -->
-  <main class="viewer-container">
-    <div class="pdf-embed-wrapper" id="pdf-wrapper">
-      <object id="pdf-object" class="pdf-frame" data="" type="application/pdf">
-        <iframe id="pdf-frame" class="pdf-frame" src="">
-          <p style="padding: 40px; text-align: center; color: #cbd5e1;">
-            Your browser does not support inline PDF viewing.<br><br>
-            <a id="fallback-download" href="#" class="btn btn-download" style="display:inline-flex;">
-              📥 Click here to Download &amp; View the PDF
-            </a>
-          </p>
-        </iframe>
-      </object>
+  <!-- Secondary Interactive Toolbar: Zoom & Page Info -->
+  <div class="toolbar-sub" id="toolbar-sub" style="display:none;">
+    <div class="page-counter-badge" id="page-counter">
+      Loading pages...
     </div>
 
-    <!-- Error / Invalid ID State -->
+    <div class="zoom-controls">
+      <button class="btn-icon" onclick="changeZoom(-0.15)" title="Zoom Out">−</button>
+      <span class="zoom-label" id="zoom-label">100%</span>
+      <button class="btn-icon" onclick="changeZoom(0.15)" title="Zoom In">+</button>
+      <button class="btn-icon" style="width: auto; padding: 0 8px; font-size: 0.75rem;" onclick="resetZoom()" title="Fit to Screen">Fit</button>
+    </div>
+  </div>
+
+  <!-- Document Viewport -->
+  <main class="document-viewport" id="viewport">
+    <!-- Loading Spinner -->
+    <div class="loading-state" id="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Rendering Official Tour Itinerary...</div>
+    </div>
+
+    <!-- PDF Pages Container -->
+    <div id="pages-container" style="width:100%; display:flex; flex-direction:column; align-items:center; gap:20px;"></div>
+
+    <!-- Fallback if PDF.js is unavailable -->
+    <iframe id="fallback-iframe" style="display:none; width:100%; height:85vh; border:none; background:#fff;"></iframe>
+
+    <!-- Error / Private Itinerary Card -->
     <div class="not-found-card" id="not-found-card">
       <div class="not-found-icon">🔒</div>
-      <h2>Itinerary Not Found or Private</h2>
+      <h2>Itinerary Document Not Found</h2>
       <p>This itinerary document could not be located or may have expired. All SunBird Lanka Tours itineraries are strictly private and accessible only via direct individual links.</p>
       
       <div class="contact-box">
@@ -330,11 +453,11 @@
           <span>✉️</span> sunbirdlankatours@gmail.com
         </div>
         <div class="contact-row">
-          <span>📍</span> Wattala, Sri Lanka
+          <span>📍</span> 403 – Elakanda Road, Wattala, Sri Lanka
         </div>
       </div>
 
-      <div style="display: flex; gap: 10px; justify-content: center;">
+      <div style="display:flex; gap:10px; justify-content:center;">
         <a href="https://wa.me/94766800130" target="_blank" class="btn btn-whatsapp">
           <span>💬</span> Contact Us on WhatsApp
         </a>
@@ -345,89 +468,182 @@
     </div>
   </main>
 
-  <!-- Mobile Floating Quick-Action Bar -->
-  <div class="floating-bar">
-    <a id="float-whatsapp" href="#" target="_blank" class="btn btn-whatsapp" style="padding: 7px 14px; font-size: 0.8rem;">
-      <span>💬</span> WhatsApp
-    </a>
-    <a id="float-download" href="#" download class="btn btn-download" style="padding: 7px 14px; font-size: 0.8rem;">
-      <span>📥</span> Download PDF
-    </a>
-  </div>
-
   <script>
     (function() {
-      // 1. Parse URL query params
+      'use strict';
+
+      // 1. Parse URL Parameter
       const params = new URLSearchParams(window.location.search);
       let docId = params.get('id') || params.get('file') || params.get('pdf');
 
       const notFoundCard = document.getElementById('not-found-card');
-      const pdfWrapper = document.getElementById('pdf-wrapper');
-      const mobileBar = document.getElementById('mobile-bar');
+      const loadingState = document.getElementById('loading-state');
+      const pagesContainer = document.getElementById('pages-container');
+      const toolbarSub = document.getElementById('toolbar-sub');
+      const pageCounter = document.getElementById('page-counter');
+      const zoomLabel = document.getElementById('zoom-label');
       const btnDownload = document.getElementById('btn-download');
       const btnWhatsapp = document.getElementById('btn-whatsapp');
-      const floatWhatsapp = document.getElementById('float-whatsapp');
-      const floatDownload = document.getElementById('float-download');
-      const mobileDownloadLink = document.getElementById('mobile-download-link');
-      const fallbackDownload = document.getElementById('fallback-download');
+      const fallbackIframe = document.getElementById('fallback-iframe');
 
-      // Security check: Only allow alphanumeric, dash, underscore, and .pdf extension
-      // Strictly prevent directory traversal attacks (e.g. "../" or "\" or absolute URLs)
+      // Security check: Only allow alphanumeric, dash, underscore, and .pdf
       const validPattern = /^[a-zA-Z0-9_-]+(\.pdf)?$/;
-
       if (!docId || !validPattern.test(docId)) {
         showNotFound();
         return;
       }
 
-      // Ensure .pdf extension
       const filename = docId.toLowerCase().endsWith('.pdf') ? docId : docId + '.pdf';
-      const pdfPath = 'itineraries/' + filename;
+      const pdfUrl = 'itineraries/' + filename;
 
-      // Check if file exists via HEAD request
-      fetch(pdfPath, { method: 'HEAD' })
-        .then(response => {
-          if (!response.ok) {
-            // Check fallback for root level or classic preview
-            showNotFound();
-          } else {
-            loadPdf(pdfPath, docId);
-          }
-        })
-        .catch(() => {
-          // If local or offline, still attempt to load
-          loadPdf(pdfPath, docId);
+      // Setup Actions
+      const downloadFilename = 'SunBird_Lanka_Tours_Itinerary_' + docId.substring(0, 8) + '.pdf';
+      btnDownload.href = pdfUrl;
+      btnDownload.download = downloadFilename;
+
+      const waMsg = encodeURIComponent(
+        `Hello SunBird Lanka Tours, I am reviewing my official tour itinerary (Ref: ${docId.substring(0, 8)}). Could you please provide further details?`
+      );
+      btnWhatsapp.href = 'https://wa.me/94766800130?text=' + waMsg;
+
+      // State for PDF Rendering
+      let currentPdf = null;
+      let totalPages = 0;
+      let zoomScale = 1.0;
+      let basePageWidth = 840;
+
+      // Determine initial scale based on viewport width
+      function calculateFitScale() {
+        const viewportWidth = window.innerWidth;
+        if (viewportWidth < 500) {
+          return 0.85;
+        } else if (viewportWidth < 768) {
+          return 0.95;
+        } else if (viewportWidth < 1100) {
+          return 1.1;
+        } else {
+          return 1.25;
+        }
+      }
+
+      zoomScale = calculateFitScale();
+      updateZoomLabel();
+
+      // Load Document via PDF.js
+      if (window.pdfjsLib) {
+        pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+          currentPdf = pdf;
+          totalPages = pdf.numPages;
+          loadingState.style.display = 'none';
+          toolbarSub.style.display = 'flex';
+          pageCounter.textContent = `${totalPages} Page${totalPages > 1 ? 's' : ''}`;
+
+          renderAllPages();
+        }).catch(err => {
+          console.warn('PDF.js load failed, falling back to iframe/download:', err);
+          // If 404 or missing
+          fetch(pdfUrl, { method: 'HEAD' }).then(res => {
+            if (!res.ok) {
+              showNotFound();
+            } else {
+              renderFallback();
+            }
+          }).catch(() => showNotFound());
         });
+      } else {
+        renderFallback();
+      }
 
-      function loadPdf(url, id) {
-        document.getElementById('pdf-object').data = url + '#toolbar=1&navpanes=0&scrollbar=1';
-        document.getElementById('pdf-frame').src = url + '#toolbar=1&navpanes=0&scrollbar=1';
+      function renderAllPages() {
+        pagesContainer.innerHTML = '';
 
-        // Set download links
-        [btnDownload, floatDownload, fallbackDownload, mobileDownloadLink].forEach(el => {
-          if (el) {
-            el.href = url;
-            el.download = 'SunBird_Lanka_Tours_Itinerary_' + id.substring(0, 8) + '.pdf';
-          }
+        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+          renderSinglePage(pageNum);
+        }
+      }
+
+      function renderSinglePage(pageNum) {
+        currentPdf.getPage(pageNum).then(page => {
+          const pixelRatio = Math.max(window.devicePixelRatio || 1, 2); // 2x for sharp rendering
+          const viewport = page.getViewport({ scale: zoomScale });
+
+          const card = document.createElement('div');
+          card.className = 'page-card';
+          card.id = `page-card-${pageNum}`;
+          card.style.maxWidth = Math.floor(viewport.width) + 'px';
+
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = Math.floor(viewport.width * pixelRatio);
+          canvas.height = Math.floor(viewport.height * pixelRatio);
+
+          canvas.style.width = Math.floor(viewport.width) + 'px';
+          canvas.style.height = Math.floor(viewport.height) + 'px';
+
+          context.scale(pixelRatio, pixelRatio);
+
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+
+          page.render(renderContext);
+
+          card.appendChild(canvas);
+
+          // Page Number tag
+          const tag = document.createElement('div');
+          tag.className = 'page-num-tag';
+          tag.textContent = `Page ${pageNum} of ${totalPages}`;
+          card.appendChild(tag);
+
+          pagesContainer.appendChild(card);
         });
+      }
 
-        // Set WhatsApp inquiry link with prefilled ID
-        const waMsg = encodeURIComponent(
-          `Hello SunBird Lanka Tours, I am reviewing my official tour itinerary (Ref: ${id.substring(0, 8)}). Could you please provide further details?`
-        );
-        const waUrl = 'https://wa.me/94766800130?text=' + waMsg;
-        if (btnWhatsapp) btnWhatsapp.href = waUrl;
-        if (floatWhatsapp) floatWhatsapp.href = waUrl;
+      // Zoom functions
+      window.changeZoom = function(delta) {
+        const newZoom = Math.min(Math.max(zoomScale + delta, 0.5), 2.5);
+        if (newZoom !== zoomScale) {
+          zoomScale = Math.round(newZoom * 100) / 100;
+          updateZoomLabel();
+          if (currentPdf) renderAllPages();
+        }
+      };
+
+      window.resetZoom = function() {
+        zoomScale = calculateFitScale();
+        updateZoomLabel();
+        if (currentPdf) renderAllPages();
+      };
+
+      function updateZoomLabel() {
+        zoomLabel.textContent = Math.round(zoomScale * 100) + '%';
+      }
+
+      function renderFallback() {
+        loadingState.style.display = 'none';
+        fallbackIframe.style.display = 'block';
+        fallbackIframe.src = pdfUrl;
       }
 
       function showNotFound() {
-        pdfWrapper.style.display = 'none';
-        mobileBar.style.display = 'none';
+        loadingState.style.display = 'none';
+        toolbarSub.style.display = 'none';
+        pagesContainer.style.display = 'none';
+        btnDownload.style.display = 'none';
         notFoundCard.style.display = 'block';
-        if (btnDownload) btnDownload.style.display = 'none';
-        const floatBar = document.querySelector('.floating-bar');
-        if (floatBar) floatBar.style.display = 'none';
       }
+
+      // Recalculate on orientation change
+      window.addEventListener('resize', () => {
+        const optimal = calculateFitScale();
+        if (Math.abs(optimal - zoomScale) > 0.4) {
+          zoomScale = optimal;
+          updateZoomLabel();
+          if (currentPdf) renderAllPages();
+        }
+      });
     })();
   </script>
 </body>
