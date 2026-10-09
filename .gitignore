@@ -1,0 +1,22 @@
+# Prize Giving project (separate project)
+PrizeGiving2026/
+
+# Scratch & test verification assets
+scratch/
+scratch_tiles/
+
+# Archives and build artifacts
+*.zip
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini

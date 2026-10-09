@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SunBird - Sri Lanka Travel Itinerary & Tactical Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       SCREEN 1: STARTING SCREEN (ITINERARY MANAGEMENT & LAUNCH HUB)
+       ========================================================================= -->
+  <div id="screen-hub" class="app-screen screen-hub">
+
+    <!-- Hub Header -->
+    <header class="hub-header">
+      <div class="hub-brand-group">
+        <div class="hub-brand-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 7c-2 0-4 1-6 3l-6 6c1 0 3-1 4-2l2 2c1-1 2-2 3-3l3-1c2-1 3-3 3-5 0-1-1-2-2-2z"/>
+            <circle cx="17.5" cy="5.5" r="1.2" fill="#e2e8f0"/>
+          </svg>
+        </div>
+        <div class="hub-brand-titles">
+          <div class="hub-title-row">
+            <span class="hub-brand-name">SUNBIRD</span>
+            <span class="hub-brand-sub">// ITINERARY HUB</span>
+          </div>
+          <span class="hub-brand-desc">Sri Lanka Travel Itinerary Management &amp; Tactical Command</span>
+        </div>
+      </div>
+
+      <!-- Center Search Bar -->
+      <div class="hub-search-container">
+        <div class="hub-search-input-wrap">
+          <svg class="hub-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="hub-search-input" placeholder="Search itineraries by title, destination, or date..." autocomplete="off">
+          <button type="button" id="hub-search-clear-btn" class="hub-search-clear-btn" title="Clear search" style="display: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="hub-header-actions">
+        <button type="button" class="hub-btn-new-itin" id="hub-btn-new-itin">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Create Itinerary</span>
+        </button>
+        <button type="button" class="hub-btn-delete-all" id="hub-btn-delete-all" title="Delete all itineraries">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>Delete All</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hub Scrollable Main Content -->
+    <div class="hub-scroll-body">
+
+      <!-- Metrics / System Telemetry Ribbon -->
+      <div class="hub-metrics-row">
+        <div class="hub-metric-tile">
+          <div class="metric-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <div class="metric-content">
+            <div class="metric-val" id="stat-total-itins">1</div>
+            <div class="metric-lbl">ACTIVE ITINERARIES</div>
+          </div>
+        </div>
+
+        <div class="hub-metric-tile">
+          <div class="metric-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="metric-content">
+            <div class="metric-val" id="stat-total-days">14</div>
+            <div class="metric-lbl">TOTAL TOUR DAYS</div>
+          </div>
+        </div>
+
+        <div class="hub-metric-tile">
+          <div class="metric-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <div class="metric-content">
+            <div class="metric-val" id="stat-total-regions">14</div>
+            <div class="metric-lbl">SRI LANKA REGIONS COVERED</div>
+          </div>
+        </div>
+
+        <div class="hub-metric-tile">
+          <div class="metric-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <div class="metric-content">
+            <div class="metric-val status-tactical">TACTICAL READY</div>
+            <div class="metric-lbl">3D ENGINE &amp; ROAD TELEMETRY</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hub Section Toolbar -->
+      <div class="hub-section-toolbar">
+        <div class="hub-section-left">
+          <h2 class="hub-section-heading">Expedition Itineraries</h2>
+          <div class="hub-duration-filter-tabs" id="hub-duration-filter-tabs">
+            <button type="button" class="hub-duration-tab active" data-filter="all">All Trips</button>
+            <button type="button" class="hub-duration-tab" data-filter="short">Short (1-5 Days)</button>
+            <button type="button" class="hub-duration-tab" data-filter="classic">Classic (6-10 Days)</button>
+            <button type="button" class="hub-duration-tab" data-filter="grand">Grand (11+ Days)</button>
+          </div>
+        </div>
+
+        <div class="hub-section-right">
+          <div class="hub-view-toggle-wrap">
+            <button type="button" class="hub-view-btn active" id="hub-view-grid-btn" data-view="grid" title="Detailed Cards View">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              </svg>
+            </button>
+            <button type="button" class="hub-view-btn" id="hub-view-compact-btn" data-view="compact" title="Compact Cards View (Style 1)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="hub-sort-wrapper">
+            <span class="hub-sort-title">SORT:</span>
+            <select id="hub-sort-select" class="hub-sort-select">
+              <option value="recent">Recently Modified</option>
+              <option value="duration-desc">Duration (Longest)</option>
+              <option value="duration-asc">Duration (Shortest)</option>
+              <option value="name-asc">Alphabetical (A-Z)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Itineraries Grid -->
+      <div class="hub-cards-grid" id="hub-cards-grid">
+        <!-- Dynamically populated by js/app.js -->
+      </div>
+
+    </div>
+
+    <!-- Create Itinerary Modal -->
+    <div class="hub-modal-backdrop" id="hub-create-modal" style="display: none;">
+      <div class="hub-modal-card modal-sm">
+        <div class="hub-modal-header">
+          <div class="modal-title-group">
+            <h3 class="modal-title">Create New Itinerary</h3>
+            <p class="modal-subtitle">Name your itinerary to get started</p>
+          </div>
+          <button type="button" class="modal-close-btn" id="modal-create-close-btn" title="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <form id="hub-create-form" class="hub-modal-body" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="create-itin-name" class="form-label">Itinerary Name</label>
+            <input type="text" id="create-itin-name" class="form-input" placeholder="e.g. Mr. Silva — 7D Buddhist Pilgrimage" required autofocus>
+          </div>
+
+          <div class="hub-modal-footer">
+            <button type="button" class="btn-modal-cancel" id="modal-create-cancel-btn">Cancel</button>
+            <button type="submit" class="btn-modal-submit" id="modal-create-submit-btn">
+              <span>Create &amp; Launch</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="hub-modal-backdrop" id="hub-delete-modal" style="display: none;">
+      <div class="hub-modal-card modal-sm">
+        <div class="hub-modal-header">
+          <div class="modal-title-group">
+            <h3 class="modal-title">Delete Itinerary</h3>
+            <p class="modal-subtitle">This action cannot be undone</p>
+          </div>
+          <button type="button" class="modal-close-btn" id="modal-delete-close-btn" title="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="hub-modal-body">
+          <p class="delete-warning-text">
+            Are you sure you want to delete <strong id="delete-itin-target-name">this itinerary</strong>? All assigned destinations, hotel bookings, and timeline telemetry will be removed.
+          </p>
+        </div>
+        <div class="hub-modal-footer">
+          <button type="button" class="btn-modal-cancel" id="modal-delete-cancel-btn">Keep Itinerary</button>
+          <button type="button" class="btn-modal-danger" id="modal-delete-confirm-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Delete Permanently</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================================================================
+       SCREEN 2: FUNCTIONAL ITINERARY COMMAND EDITOR
+       ========================================================================= -->
+  <div id="screen-editor" class="app-screen screen-editor" style="display: none;">
+
+    <!-- Full-Width Cyber Command Header -->
+    <header class="app-header">
+      <div class="brand-container">
+        <!-- Return to Hub Button -->
+        <button type="button" class="btn-return-hub" id="btn-return-hub" title="Return to All Itineraries">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>All Itineraries</span>
+        </button>
+        <span id="editor-active-itin-title" style="display: none;"></span>
+      </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="header-nav-tabs" aria-label="Dashboard Navigation">
+      <button type="button" class="nav-tab-btn active" data-tab="map" id="nav-btn-map" title="3D Map View">
+        <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+          <line x1="8" y1="2" x2="8" y2="18"></line>
+          <line x1="16" y1="6" x2="16" y2="22"></line>
+        </svg>
+        <span>Map</span>
+      </button>
+      <button type="button" class="nav-tab-btn" data-tab="itinerary" id="nav-btn-itinerary" title="Itinerary Configuration & Info">
+        <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="12" y1="18" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>Itinerary Info</span>
+      </button>
+      <button type="button" class="nav-tab-btn" data-tab="pdf" id="nav-btn-pdf" title="View & Edit Generated PDF Itinerary">
+        <svg class="nav-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <span>PDF</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Dashboard Workspace: Non-Scrollable Full-Screen Layout -->
+  <main class="dashboard-workspace">
+
+    <!-- Left / Center Main Column: 3D Tactical Map (Top) + Time Line (Bottom) -->
+    <section class="dashboard-main-col">
+
+      <!-- 1. 3D Tactical Cyber Map Section (Matching User Reference Image media_1789747625578.png) -->
+      <div class="map-3d-card" id="map-section">
+        
+        <!-- 3D WebGL Viewport Container -->
+        <div class="map-3d-viewport">
+          <div id="map-3d-canvas-container" class="map-canvas-container">
+            <!-- WebGL Canvas injected by js/map3d.js -->
+          </div>
+
+          <!-- 3D Billboard Markers Overlay Layer (Screen-space projected) -->
+          <div id="map-markers-overlay" class="map-markers-overlay">
+            <!-- Dynamically populated by js/map3d.js -->
+          </div>
+
+          <!-- Destination Details Interactive Tooltip Card -->
+          <div id="map-destination-tooltip" class="map-destination-tooltip">
+            <!-- Populated on marker hover -->
+          </div>
+
+
+
+
+          <!-- Bottom-Right 3D Interactive Control Buttons -->
+          <div class="map-hud-controls">
+            <button type="button" class="hud-btn" id="map-btn-weather-toggle" title="Toggle 25-District Monsoon &amp; Rainfall Radar">
+              <span class="btn-icon">
+                <svg class="hud-circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10.5" stroke-width="1.8"/>
+                  <path d="M8 13.5a3 3 0 0 1-.4-5.96 4 4 0 0 1 7.8-1.04A3 3 0 0 1 17.5 12H8z" fill="currentColor" stroke="none"/>
+                  <line x1="9" y1="15" x2="8" y2="17.5" stroke-width="1.6" stroke-linecap="round"/>
+                  <line x1="12" y1="15" x2="11" y2="17.5" stroke-width="1.6" stroke-linecap="round"/>
+                  <line x1="15" y1="15" x2="14" y2="17.5" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="btn-label" id="map-weather-label">Weather Radar</span>
+            </button>
+            <button type="button" class="hud-btn active" id="map-btn-mood-toggle" title="Toggle Light / Dark Mood">
+              <span class="btn-icon">
+                <svg class="hud-circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10.5" stroke-width="1.8"/>
+                  <path d="M14.2 6.6 A 6.5 6.5 0 0 0 7.5 12 A 6.5 6.5 0 0 0 14.2 17.4 A 5.5 5.5 0 0 1 14.2 6.6 Z" fill="currentColor" stroke="none"/>
+                </svg>
+              </span>
+              <span class="btn-label" id="map-mood-label">Dark Mood</span>
+            </button>
+            <button type="button" class="hud-btn" id="map-btn-layer-toggle" title="Switch between Terrain and Satellite textures">
+              <span class="btn-icon">
+                <svg class="hud-circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10.5" stroke-width="1.8"/>
+                  <polygon points="5,16.5 10.5,8.5 14,13 16,10 19,16.5" fill="currentColor" stroke="none"/>
+                </svg>
+              </span>
+              <span class="btn-label" id="map-layer-label">Terrain</span>
+            </button>
+            <button type="button" class="hud-btn" id="map-btn-autorotate" title="Toggle 360Â° Cinematic Orbit">
+              <span class="btn-icon">
+                <svg class="hud-circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10.5" stroke-width="1.8"/>
+                  <path d="M12 6.5 A 5.5 5.5 0 1 1 6.8 14" stroke-width="1.8" stroke-linecap="round"/>
+                  <polyline points="12,4 12,7 9.5,7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="btn-label">Auto-Rotate</span>
+            </button>
+            <button type="button" class="hud-btn" id="map-btn-view-toggle" title="Switch between 3D Tilt and 2D Plan View">
+              <span class="btn-icon">
+                <svg class="hud-circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10.5" stroke-width="1.8"/>
+                  <rect x="7" y="7" width="10" height="10" rx="1.5" stroke-width="1.6"/>
+                  <line x1="7" y1="12" x2="17" y2="12" stroke-width="1.2" stroke-dasharray="1.5 1.5"/>
+                  <line x1="12" y1="7" x2="12" y2="17" stroke-width="1.2" stroke-dasharray="1.5 1.5"/>
+                </svg>
+              </span>
+              <span class="btn-label">2D Plan</span>
+            </button>
+            <button type="button" class="hud-btn" id="map-btn-reset-view" title="Reset to Default Angle">
+              <span class="btn-icon">
+                <svg class="hud-circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10.5" stroke-width="1.8"/>
+                  <circle cx="12" cy="12" r="5.2" stroke-width="1.4"/>
+                  <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+                  <line x1="12" y1="4.5" x2="12" y2="6.5" stroke-width="1.6"/>
+                  <line x1="12" y1="17.5" x2="12" y2="19.5" stroke-width="1.6"/>
+                  <line x1="4.5" y1="12" x2="6.5" y2="12" stroke-width="1.6"/>
+                  <line x1="17.5" y1="12" x2="19.5" y2="12" stroke-width="1.6"/>
+                </svg>
+              </span>
+              <span class="btn-label">Reset View</span>
+            </button>
+            <div class="hud-btn-group">
+              <button type="button" class="hud-zoom-btn" id="map-btn-zoom-in" title="Zoom In">
+                <svg class="hud-circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10.5" stroke-width="1.8"/>
+                  <line x1="12" y1="7.5" x2="12" y2="16.5" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="7.5" y1="12" x2="16.5" y2="12" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <button type="button" class="hud-zoom-btn" id="map-btn-zoom-out" title="Zoom Out">
+                <svg class="hud-circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10.5" stroke-width="1.8"/>
+                  <line x1="7.5" y1="12" x2="16.5" y2="12" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Touch / Mouse Orbit Hint -->
+          <div class="map-interaction-hint" title="Mouse &amp; Touch Navigation Controls">
+            <div class="hint-item">
+              <svg class="hint-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <circle class="hint-ring" cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.4"/>
+                <path class="hint-mouse-palm" d="M 8 15 h 16 v 3.5 a 8 8 0 0 1 -16 0 Z" fill="#64748b"/>
+                <path class="hint-mouse-btn-active" d="M 8 14 V 11 A 7 7 0 0 1 14.8 5.2 V 14 Z" fill="#ef4444"/>
+                <path class="hint-mouse-btn-inactive" d="M 17.2 14 V 5.2 A 7 7 0 0 1 24 11 V 14 Z" fill="#cbd5e1"/>
+                <rect class="hint-mouse-wheel" x="14.3" y="6.8" width="3.4" height="6.8" rx="1.7" fill="#ffffff" stroke="#64748b" stroke-width="0.8"/>
+              </svg>
+              <span>Left-Drag: Orbit 3D</span>
+            </div>
+            <div class="hint-sep"></div>
+            <div class="hint-item">
+              <svg class="hint-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <circle class="hint-ring" cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.4"/>
+                <path class="hint-mouse-palm" d="M 8 15 h 16 v 3.5 a 8 8 0 0 1 -16 0 Z" fill="#64748b"/>
+                <path class="hint-mouse-btn-inactive" d="M 8 14 V 11 A 7 7 0 0 1 14.8 5.2 V 14 Z" fill="#cbd5e1"/>
+                <path class="hint-mouse-btn-active" d="M 17.2 14 V 5.2 A 7 7 0 0 1 24 11 V 14 Z" fill="#ef4444"/>
+                <rect class="hint-mouse-wheel" x="14.3" y="6.8" width="3.4" height="6.8" rx="1.7" fill="#ffffff" stroke="#64748b" stroke-width="0.8"/>
+              </svg>
+              <span>Right-Drag: Pan</span>
+            </div>
+            <div class="hint-sep"></div>
+            <div class="hint-item">
+              <svg class="hint-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <circle class="hint-ring" cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.4"/>
+                <path class="hint-mouse-palm" d="M 8 15 h 16 v 3.5 a 8 8 0 0 1 -16 0 Z" fill="#64748b"/>
+                <path class="hint-mouse-btn-inactive" d="M 8 14 V 11 A 7 7 0 0 1 14.8 5.2 V 14 Z" fill="#cbd5e1"/>
+                <path class="hint-mouse-btn-inactive" d="M 17.2 14 V 5.2 A 7 7 0 0 1 24 11 V 14 Z" fill="#cbd5e1"/>
+                <rect class="hint-mouse-wheel-active" x="14.3" y="6.8" width="3.4" height="6.8" rx="1.7" fill="#0284c7"/>
+              </svg>
+              <span>Scroll: Zoom</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map-Space View Overlay Container for Itinerary Details, Fleet & Advisory -->
+        <div id="map-space-views" class="map-space-views" style="display: none;">
+          <!-- View Content Container -->
+          <div class="map-view-content-wrap">
+
+            <!-- 1. Itinerary Details View -->
+            <div id="view-itinerary" class="map-space-view-pane active">
+              <!-- Itinerary Config Single Tabs Bar (media_1790319778120.png) -->
+              <div class="itin-config-tabs-bar">
+                <button type="button" class="itin-config-tab-btn active" data-target="itin-tab-arrival">Arival Info</button>
+                <button type="button" class="itin-config-tab-btn" data-target="itin-tab-dn">N/D</button>
+                <button type="button" class="itin-config-tab-btn" data-target="itin-tab-pax">Pax</button>
+                <button type="button" class="itin-config-tab-btn" data-target="itin-tab-vehicle">Vehicle</button>
+                <button type="button" class="itin-config-tab-btn" data-target="itin-tab-employee">Employee</button>
+                <button type="button" class="itin-config-tab-btn" data-target="itin-tab-hotel-rating">Hotel Rating</button>
+                <button type="button" class="itin-config-tab-btn" data-target="itin-tab-currency">Currency</button>
+              </div>
+
+              <div class="itin-config-content">
+
+                <!-- Tab 1: Arrival Info (media_1790319846077.png) -->
+                <div id="itin-tab-arrival" class="itin-config-pane active">
+                  <div class="arrival-tab-content">
+                    <div class="arrival-section-title">Arival Details</div>
+
+                    <div class="arrival-units-row">
+                      <!-- Calendar Date Section -->
+                      <div class="arrival-control-unit">
+                        <div class="arrival-icon-box" id="arrival-date-box-trigger" title="Click to open Calendar Date Picker">
+                          <svg class="arrival-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                            <rect x="7" y="13" width="2" height="2" rx="0.5" fill="currentColor"/>
+                            <rect x="11" y="13" width="2" height="2" rx="0.5" fill="currentColor"/>
+                            <rect x="15" y="13" width="2" height="2" rx="0.5" fill="currentColor"/>
+                            <rect x="7" y="17" width="2" height="2" rx="0.5" fill="currentColor"/>
+                            <rect x="11" y="17" width="2" height="2" rx="0.5" fill="currentColor"/>
+                            <rect x="15" y="17" width="2" height="2" rx="0.5" fill="currentColor"/>
+                          </svg>
+                          <!-- Native date input overlay (clicking button opens picker) -->
+                          <input type="date" id="arrival-date-input" class="arrival-native-picker-overlay" value="2026-08-27" title="Select Arrival Date">
+                        </div>
+
+                        <div class="arrival-segmented-pill" id="arrival-date-group">
+                          <input type="text" class="arrival-seg-input seg-year" id="arrival-year-box" maxlength="4" value="2026" placeholder="YYYY" aria-label="Year">
+                          <span class="arrival-seg-sep"></span>
+                          <input type="text" class="arrival-seg-input seg-month" id="arrival-month-box" maxlength="2" value="08" placeholder="MM" aria-label="Month">
+                          <span class="arrival-seg-sep"></span>
+                          <input type="text" class="arrival-seg-input seg-day" id="arrival-day-box" maxlength="2" value="27" placeholder="DD" aria-label="Day">
+                        </div>
+                      </div>
+
+                      <!-- Clock Time Section -->
+                      <div class="arrival-control-unit">
+                        <div class="arrival-icon-box" id="arrival-time-box-trigger" title="Click to open Time Picker">
+                          <svg class="arrival-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 12"/>
+                          </svg>
+                          <!-- Native time input overlay (clicking button opens picker) -->
+                          <input type="time" id="arrival-time-input" class="arrival-native-picker-overlay" value="20:00" title="Select Arrival Time">
+                        </div>
+
+                        <div class="arrival-segmented-pill" id="arrival-time-group">
+                          <input type="text" class="arrival-seg-input seg-hour" id="arrival-hour-box" maxlength="2" value="08" placeholder="HH" aria-label="Hour">
+                          <span class="arrival-seg-sep"></span>
+                          <input type="text" class="arrival-seg-input seg-minute" id="arrival-minute-box" maxlength="2" value="00" placeholder="MM" aria-label="Minute">
+                          <span class="arrival-seg-sep"></span>
+                          <button type="button" class="arrival-seg-ampm" id="arrival-ampm-btn" title="Click to toggle AM/PM">PM</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Quick Time Chips -->
+                    <div class="quick-chips-section" style="margin-top:14px;">
+                      <span class="quick-chips-title">Quick Flight Arrival Hub Times:</span>
+                      <div class="quick-time-chips" id="quick-time-chips">
+                        <button type="button" class="time-chip" data-time="06:00">06:00 AM (Early)</button>
+                        <button type="button" class="time-chip" data-time="12:00">12:00 PM (Midday)</button>
+                        <button type="button" class="time-chip active" data-time="20:00">08:00 PM (Evening)</button>
+                        <button type="button" class="time-chip" data-time="23:30">11:30 PM (Red Eye)</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 2: D/N (Days / Nights - media_1790319932354.png) -->
+                <div id="itin-tab-dn" class="itin-config-pane">
+                  <div class="dn-tab-content">
+                    <div class="dn-stepper-group">
+                      <span class="dn-stepper-label">Days</span>
+                      <div class="dn-stepper-control">
+                        <button type="button" class="dn-stepper-btn" id="days-dec" aria-label="Decrease Days">&minus;</button>
+                        <input type="number" id="days-input" class="dn-stepper-input" min="1" max="30" value="8" aria-label="Days Count">
+                        <button type="button" class="dn-stepper-btn" id="days-inc" aria-label="Increase Days">+</button>
+                      </div>
+                    </div>
+                    <div class="dn-stepper-group">
+                      <span class="dn-stepper-label">Nights</span>
+                      <div class="dn-stepper-control">
+                        <button type="button" class="dn-stepper-btn" id="nights-dec" aria-label="Decrease Nights">&minus;</button>
+                        <input type="number" id="nights-input" class="dn-stepper-input" min="0" max="30" value="7" aria-label="Nights Count">
+                        <button type="button" class="dn-stepper-btn" id="nights-inc" aria-label="Increase Nights">+</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="duration-ratio-visual">
+                    <div class="ratio-bar-wrap">
+                      <div class="ratio-segment ratio-day" id="ratio-day-bar" style="flex: 8;" title="8 Days"></div>
+                      <div class="ratio-segment ratio-night" id="ratio-night-bar" style="flex: 7;" title="7 Nights"></div>
+                    </div>
+                    <div class="ratio-legend">
+                      <span class="ratio-legend-item"><span class="legend-color day-col"></span> Days</span>
+                      <span class="ratio-legend-item"><span class="legend-color night-col"></span> Nights</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 3: Pax (Tourists & Rooms) -->
+                <div id="itin-tab-pax" class="itin-config-pane">
+                  <div class="itin-design-container">
+                    <!-- Top Box: No of Tourists (Single Uniform Row) -->
+                    <div class="itin-box itin-tourists-box">
+                      <span class="itin-box-title">No of Tourists</span>
+                      <div class="itin-stepper-wrap">
+                        <button type="button" class="itin-stepper-btn itin-stepper-minus" id="tourists-dec" aria-label="Decrease Tourists">&minus;</button>
+                        <input type="number" id="tourists-input" class="itin-stepper-input" min="1" max="99" value="14" aria-label="Number of Tourists">
+                        <button type="button" class="itin-stepper-btn itin-stepper-plus" id="tourists-inc" aria-label="Increase Tourists">+</button>
+                      </div>
+                      <div class="itin-tourists-badge" id="tourists-badge-box" title="14 Tourists awaiting rooms">
+                        <span class="itin-badge-label" id="tourists-badge-label">Remaining:</span>
+                        <span class="itin-badge-count" id="tourists-badge-count">14</span>
+                        <svg class="itin-person-icon" id="tourists-badge-icon" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <!-- Visual Accommodation Ratio Progress Bar (Matching D/N style) -->
+                    <div class="pax-accommodation-visual" id="pax-accommodation-visual">
+                      <div class="pax-ratio-bar-wrap">
+                        <div class="pax-ratio-segment pax-ratio-booked" id="pax-bar-booked" style="flex: 0;" title="0 Booked"></div>
+                        <div class="pax-ratio-segment pax-ratio-remaining" id="pax-bar-remaining" style="flex: 14;" title="14 Remaining"></div>
+                      </div>
+                      <div class="pax-ratio-legend">
+                        <span class="pax-legend-item"><span class="legend-color booked-col"></span> <span id="pax-legend-booked-text">0 Booked</span></span>
+                        <span class="pax-legend-item"><span class="legend-color remaining-col"></span> <span id="pax-legend-remaining-text">14 Remaining</span></span>
+                        <span class="pax-legend-total" id="pax-legend-total-text">Total: 14 Pax</span>
+                      </div>
+                    </div>
+
+                    <!-- Bottom Box: Rooms -->
+                    <div class="itin-box itin-rooms-box">
+                      <div class="itin-rooms-header">
+                        <span class="itin-rooms-title">Rooms</span>
+                        <svg class="itin-house-icon itin-house-header" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 3L2 12h3v8a1 1 0 0 0 1 1h4v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h4a1 1 0 0 0 1-1v-8h3L12 3z"/>
+                        </svg>
+                      </div>
+                      <div class="itin-dropdown-container">
+                        <button type="button" class="itin-room-type-btn" id="room-type-btn" aria-haspopup="true" aria-expanded="false">
+                          <svg class="itin-chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                          <span>Room Type</span>
+                        </button>
+                        <div class="itin-room-dropdown-menu" id="room-type-dropdown" style="display: none;">
+                          <div class="itin-dropdown-col">
+                            <div class="itin-dropdown-category">Standard Rooms</div>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Standard Single" data-capacity="1" data-price="80" data-full-label="Standard Single (1 Person) - $80/nt">
+                              <span class="dropdown-item-text">Standard Single - $80/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Standard Double" data-capacity="2" data-price="120" data-full-label="Standard Double (2 People) - $120/nt">
+                              <span class="dropdown-item-text">Standard Double - $120/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Twin Room" data-capacity="2" data-price="130" data-full-label="Twin Room (2 People) - $130/nt">
+                              <span class="dropdown-item-text">Twin Room - $130/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Triple Room" data-capacity="3" data-price="160" data-full-label="Triple Room (3 People) - $160/nt">
+                              <span class="dropdown-item-text">Triple Room - $160/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Quad Room" data-capacity="4" data-price="200" data-full-label="Quad Room (4 People) - $200/nt">
+                              <span class="dropdown-item-text">Quad Room - $200/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                          </div>
+                          <div class="itin-dropdown-col">
+                            <div class="itin-dropdown-category">Premium &amp; Suites</div>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Deluxe Double" data-capacity="2" data-price="180" data-full-label="Deluxe Double (2 People) - $180/nt">
+                              <span class="dropdown-item-text">Deluxe Double - $180/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Junior Suite" data-capacity="2" data-price="220" data-full-label="Junior Suite (2 People) - $220/nt">
+                              <span class="dropdown-item-text">Junior Suite - $220/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Executive Suite" data-capacity="2" data-price="300" data-full-label="Executive Suite (2 People) - $300/nt">
+                              <span class="dropdown-item-text">Executive Suite - $300/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Family Suite" data-capacity="4" data-price="350" data-full-label="Family Suite (4 People) - $350/nt">
+                              <span class="dropdown-item-text">Family Suite - $350/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                            <button type="button" class="itin-dropdown-item" data-room-type="Presidential Suite" data-capacity="6" data-price="800" data-full-label="Presidential Suite (6 People) - $800/nt">
+                              <span class="dropdown-item-text">Presidential Suite - $800/nt</span>
+                              <span class="dropdown-item-icons">(<svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg><svg class="itin-person-icon-small" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/></svg>)</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="itin-room-items-list" id="room-cards-container">
+                        <!-- Dynamically rendered by js/app.js -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 4: Vehicle (media_1790351351159.png) -->
+                <div id="itin-tab-vehicle" class="itin-config-pane">
+                  <div class="vehicle-showcase-container">
+                    <!-- 3D Interactive Canvas Viewport -->
+                    <div class="vehicle-canvas-wrapper" id="vehicle-canvas-wrapper">
+                      <canvas id="vehicle-3d-canvas"></canvas>
+                      <div class="vehicle-canvas-hint">Drag to inspect 360°</div>
+                    </div>
+
+                    <!-- Carousel Selector Row matching media_1790351351159.png -->
+                    <div class="vehicle-selector-row">
+                      <button type="button" class="vehicle-nav-btn" id="vehicle-prev-btn" title="Previous Vehicle" aria-label="Previous Vehicle">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                      </button>
+                      <span class="vehicle-title" id="vehicle-type-label">Car</span>
+                      <button type="button" class="vehicle-nav-btn" id="vehicle-next-btn" title="Next Vehicle" aria-label="Next Vehicle">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Passenger Capacity Pill placed below -->
+                    <div class="vehicle-cap-pill-wrapper">
+                      <span class="vehicle-cap-pill" id="vehicle-cap-pill" title="Accommodates up to 3 passengers">
+                        <svg class="v-person-icon" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c4.42 0 8 2.24 8 5v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1c0-2.76 3.58-5 8-5z"/>
+                        </svg>
+                        <span id="vehicle-cap-num">3</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 5: Employee -->
+                <div id="itin-tab-employee" class="itin-config-pane">
+                  <div class="emp-tab-content">
+                    <div class="emp-section-title">Employee</div>
+
+                    <!-- Control Center Card -->
+                    <div class="emp-control-card" id="emp-control-card">
+                      <div class="emp-carousel-row">
+                        <button type="button" class="emp-arrow-btn" id="emp-prev-btn" title="Previous role" aria-label="Previous role">
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <div class="emp-role-pill" id="emp-role-pill">Driver</div>
+                        <button type="button" class="emp-arrow-btn" id="emp-next-btn" title="Next role" aria-label="Next role">
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                      </div>
+                      <button type="button" class="emp-add-btn" id="emp-add-btn">Add</button>
+                    </div>
+
+                    <!-- Added Profiles Row -->
+                    <div class="emp-profiles-row" id="emp-profiles-row"></div>
+                  </div>
+                </div>
+
+                <!-- Tab 6: Hotel Rating -->
+                <div id="itin-tab-hotel-rating" class="itin-config-pane">
+                  <div class="hotel-rating-tab-content">
+                    <div class="hotel-rating-section-title">Hotel Rating</div>
+                    <div class="hotel-rating-pill-track" id="hotel-rating-pill">
+                      <svg class="hotel-rating-star filled" data-star="1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                      <svg class="hotel-rating-star filled" data-star="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                      <svg class="hotel-rating-star filled" data-star="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                      <svg class="hotel-rating-star" data-star="4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                      <svg class="hotel-rating-star" data-star="5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 7: Currency Toggle -->
+                <div id="itin-tab-currency" class="itin-config-pane">
+                  <div class="currency-tab-content">
+                    <div class="currency-section-title">Currency</div>
+                    <div class="currency-toggle-track" id="currency-toggle" title="Click to toggle between USD and LKR">
+                      <div class="currency-toggle-icon-circle" id="currency-icon-circle">
+                        <span class="currency-icon-symbol" id="currency-icon-symbol">$</span>
+                      </div>
+                      <div class="currency-toggle-label" id="currency-toggle-label">USD</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- 2. Editable Generated PDF View -->
+            <div id="view-pdf" class="map-space-view-pane">
+              <!-- Version Switcher Toolbar -->
+              <div class="pdf-version-toolbar">
+                <div class="pdf-version-left">
+                  <span class="pdf-version-label">TEMPLATE EDITION:</span>
+                  <span class="pdf-version-badge" id="pdf-version-indicator">✨ Modern Luxury Edition</span>
+                </div>
+                <div class="pdf-version-segmented-control" role="tablist" aria-label="Itinerary Template Version">
+                  <button type="button" class="pdf-version-btn" id="btn-pdf-ver-classic" data-version="classic" role="tab" aria-selected="false" title="Switch to Classic Tabular Itinerary Quotation">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="3" y1="9" x2="21" y2="9"></line>
+                      <line x1="3" y1="15" x2="21" y2="15"></line>
+                      <line x1="9" y1="9" x2="9" y2="21"></line>
+                    </svg>
+                    <span>Classic Table</span>
+                  </button>
+                  <button type="button" class="pdf-version-btn active" id="btn-pdf-ver-modern" data-version="modern" role="tab" aria-selected="true" title="Switch to Modern Luxury Experience Itinerary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <span>Modern Luxury</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="pdf-preview-container">
+                <iframe id="pdf-preview-iframe" class="pdf-preview-iframe" title="Editable Itinerary PDF Preview" src="itinerary_modern.html"></iframe>
+
+                <!-- Floating Download & Print Actions in Bottom-Right Corner -->
+                <div class="pdf-floating-action-container" id="pdf-floating-actions">
+                  <a href="SunBird_Lanka_Tours_Itinerary_Modern.pdf" download="SunBird_Lanka_Tours_Itinerary_Modern.pdf" class="pdf-download-btn-main" id="btn-download-pdf-file" title="Download Modern Luxury Itinerary PDF">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Download PDF</span>
+                  </a>
+                  <button type="button" class="pdf-download-btn-secondary" id="btn-print-pdf-live" title="Print or Save Live Edits to PDF">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                      <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    <span>Print / Save</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. The Timeline Visualizer Card (Accurate Reproduction of Illustration) -->
+      <div class="timeline-canvas-card">
+        <!-- Top Bar: Selected Day Journey Status Bar (Image 1, 2, 3) -->
+        <div class="timeline-day-status-bar" id="timeline-day-status-bar">
+          <!-- State 1: No Day Selected (Image 1) -->
+          <div class="day-status-empty" id="day-status-empty">
+            <div class="no-day-badge">No Day Selected</div>
+          </div>
+
+          <!-- State 2: Day Selected (Image 2 & 3 - Symmetric 3-Column Grid) -->
+          <div class="day-status-active" id="day-status-active" style="display: none;">
+            <!-- Column 1: Origin (Right-aligned in its 50% half) -->
+            <div class="status-origin-col">
+              <span class="status-origin-icon" id="status-origin-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                </svg>
+              </span>
+              <span class="status-origin-name" id="status-origin-name">Airport</span>
+              <span class="status-arrow-left">
+                <svg width="22" height="15" viewBox="0 0 24 16" fill="none">
+                  <path d="M7 1L0 8L7 15V10.5H24V5.5H7V1Z" fill="#3b82f6"/>
+                </svg>
+              </span>
+            </div>
+
+            <!-- Column 2: Day Badge (Exact Dead-Center) with Hover-to-Plus -->
+            <div class="status-center-badge can-add" id="status-day-badge" title="Click to add a second destination">
+              <span class="badge-day-text">Day 1</span>
+              <span class="badge-plus-icon">+</span>
+            </div>
+
+            <!-- Column 3: Destination (Left-aligned in its 50% half) -->
+            <div class="status-dest-col">
+              <span class="status-arrow-right">
+                <svg width="22" height="15" viewBox="0 0 24 16" fill="none">
+                  <path d="M17 1L24 8L17 15V10.5H0V5.5H17V1Z" fill="#3b82f6"/>
+                </svg>
+              </span>
+              <span class="status-dest-icon" id="status-dest-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+              </span>
+              <span class="status-dest-name" id="status-dest-name">Destination</span>
+            </div>
+          </div>
+
+          <!-- State 3: Night Selected (Image 2 - Centered Hotel & Accommodation Status) -->
+          <div class="night-status-active" id="night-status-active" style="display: none;">
+            <span class="night-status-pin" id="night-status-pin">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+            </span>
+            <span class="night-status-title" id="night-status-title">Sigiriya Region (138 Hotels &amp; Resorts)</span>
+          </div>
+        </div>
+
+        <!-- Master Timeline Layout: Fixed Left Header Column + Scrollable Graphic Area -->
+        <div class="timeline-layout-wrapper" id="timeline-illustration">
+
+          <!-- Left Labels Column (Static, NEVER moves, zero bleed) -->
+          <div class="timeline-labels-column">
+            <div class="timeline-label-cell label-date">DATE :</div>
+            <div class="timeline-label-cell label-day">DAY :</div>
+            <div class="timeline-label-cell label-hotels">HOTELS :</div>
+          </div>
+
+          <!-- Scrollable Tracks Viewport (overflow-x: auto clips anything scrolled to the left) -->
+          <div class="timeline-scroll-container">
+            <div class="timeline-graphic-area">
+              
+              <!-- Red Time Indicator Pin & Badge -->
+              <div class="arrival-marker" id="arrival-marker">
+                <div class="arrival-badge" id="arrival-badge-text">08:00 PM</div>
+                <div class="arrival-diamond"></div>
+                <div class="arrival-needle"></div>
+              </div>
+
+              <!-- Row 1: Date Distribution Header Strip (Image 3) -->
+              <div class="date-header-track" id="date-header-track">
+                <!-- Dynamically populated date blocks -->
+              </div>
+
+              <!-- Row 2: Continuous Blue & Lime-Green Timeline Track -->
+              <div class="timeline-track-wrapper">
+                <div class="timeline-track" id="timeline-track">
+                  <!-- Dynamically populated: Trimmed Day 1 + Days & Nights -->
+                </div>
+              </div>
+
+              <!-- Row 3: Hotels Section Track (New!) -->
+              <div class="hotels-track-wrapper">
+                <div class="hotels-track" id="hotels-track">
+                  <!-- Dynamically populated: Hotel Not Booked blocks under each night -->
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Right Sidebar Column: Destinations / Hotels / Activity Explorer & Controls (Matching media_1789842931687.png) -->
+    <aside class="dashboard-sidebar-col">
+
+      <!-- Top Header: Day / Night Selection Status -->
+      <div class="sidebar-top-status-bar" id="sidebar-top-status-bar">
+        <div class="sidebar-status-empty" id="sidebar-status-empty">
+          <div class="no-day-badge">No Selection</div>
+        </div>
+        <div class="sidebar-status-active" id="sidebar-status-active" style="display: none;">
+          <div class="sidebar-day-pill" id="sidebar-day-pill">Day 1</div>
+        </div>
+      </div>
+
+      <!-- 3 Navigation Tabs at Top (Higher in Hierarchy, Edge-to-Edge Header) -->
+      <div class="side-tabs-header" role="tablist">
+        <button type="button" class="side-tab-btn active" data-tab="destinations" id="tab-btn-destinations" role="tab" aria-selected="true">
+          Destinations
+        </button>
+        <button type="button" class="side-tab-btn" data-tab="hotels" id="tab-btn-hotels" role="tab" aria-selected="false">
+          Hotels
+        </button>
+        <button type="button" class="side-tab-btn" data-tab="activity" id="tab-btn-activity" role="tab" aria-selected="false">
+          Attractions
+        </button>
+        <div class="side-tab-indicator" id="side-tab-indicator"></div>
+      </div>
+
+      <!-- Main Sidebar Content Container -->
+      <div class="sidebar-scrollable-content">
+
+        <!-- 1. Destinations Pane (Search Bar + Checkbox Destination Cards matching media_1789842931687.png) -->
+        <div class="side-tab-pane active" id="pane-destinations" role="tabpanel">
+
+          <!-- Search Destination Input (Crisp White Border + Magnifier Icon) -->
+          <div class="dest-search-wrap">
+            <input type="text" id="dest-search-input" class="dest-search-input" placeholder="Search Destination" autocomplete="off" spellcheck="false">
+            <svg class="dest-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <!-- Destination Cards List -->
+          <div class="destination-cards-list" id="destination-cards-list">
+            <!-- Dynamically populated by js/app.js -->
+          </div>
+        </div>
+
+        <!-- 2. Hotels Pane (Search Bar + Checkbox Hotel Cards matching Destination Tab UI) -->
+        <div class="side-tab-pane" id="pane-hotels" role="tabpanel">
+
+          <!-- Search Hotel Input (At top matching wireframe) -->
+          <div class="dest-search-wrap">
+            <input type="text" id="hotel-search-input" class="dest-search-input" placeholder="Search Hotels" autocomplete="off" spellcheck="false">
+            <svg class="dest-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <!-- Hotel Clean 2-Row Filters (Matching media_1790316139454.png) -->
+          <div class="hotel-custom-filters" id="hotel-custom-filters">
+            <!-- Row 1: Destination Filter -->
+            <div class="hotel-filter-line" id="hotel-dest-filter-line">
+              <div class="hotel-filter-line-left" id="hotel-dest-line-left" title="Click to toggle destination if multiple are scheduled">
+                <svg class="hotel-filter-pin-icon" viewBox="0 0 24 24" width="20" height="20" fill="#38bdf8">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                <span class="hotel-filter-heading" id="hotel-dest-heading">Hotels in Sigiriya</span>
+              </div>
+              <button type="button" class="hotel-filter-showall-btn" id="hotel-dest-showall-btn" title="Toggle Show All Destinations">Show all</button>
+            </div>
+
+            <!-- Row 2: Star Rating Filter -->
+            <div class="hotel-filter-line" id="hotel-star-filter-line">
+              <div class="hotel-filter-line-left" id="hotel-star-line-left" title="Click to cycle star rating (4 Star â†’ 5 Star â†’ 3 Star â†’ All Stars)">
+                <svg class="hotel-filter-star-icon" viewBox="0 0 24 24" width="20" height="20" fill="#a3e635">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                </svg>
+                <span class="hotel-filter-heading" id="hotel-star-heading">4 Star</span>
+              </div>
+              <button type="button" class="hotel-filter-showall-btn" id="hotel-star-showall-btn" title="Toggle Show All Stars">Show all</button>
+            </div>
+          </div>
+
+          <!-- Hotel Cards List -->
+          <div class="destination-cards-list hotels-cards-list" id="hotels-cards-list">
+            <!-- Dynamically populated by js/app.js -->
+          </div>
+        </div>
+
+        <!-- 3. Attractions Pane (Day-by-day curated experiences matching wireframe) -->
+        <div class="side-tab-pane" id="pane-activity" role="tabpanel">
+          <div class="attract-pane-header">
+            <div class="dest-search-wrap">
+              <input type="text" id="attract-search-input" class="dest-search-input" placeholder="Search Attractions" autocomplete="off" spellcheck="false">
+              <svg class="dest-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <div class="attract-summary-bar">
+              <span class="attract-summary-text" id="attract-summary-text">0 Selected</span>
+              <button type="button" class="attract-summary-btn" id="attract-expand-all-btn">Expand All</button>
+            </div>
+          </div>
+          <div class="activities-cards-list" id="activities-cards-list">
+            <!-- Dynamically populated by js/app.js based on destinations -->
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+
+  </main>
+  </div> <!-- /#screen-editor -->
+
+  <!-- Toast Notification -->
+  <div class="toast-container">
+    <div class="toast" id="toast">
+      <span class="toast-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </span>
+      <span class="toast-message">Notification message</span>
+    </div>
+  </div>
+
+  <!-- Three.js 3D WebGL Library & OrbitControls -->
+  <script src="js/lib/three.min.js"></script>
+  <script src="js/lib/OrbitControls.js"></script>
+  <script src="js/lib/Reflector.js"></script>
+  <script src="js/lib/GLTFLoader.js"></script>
+  <script src="js/lib/MTLLoader.js"></script>
+  <script src="js/lib/OBJLoader.js"></script>
+  <!-- Sri Lanka High-Resolution Geographic Data & Coordinates -->
+  <script src="js/sri-lanka-geo.js"></script>
+  <!-- High-Resolution Georeferenced Offline Map Textures -->
+  <script src="js/map-textures.js"></script>
+  <!-- Sri Lanka Hotel Intelligence Database (91 Hotels Ã— 34 Destinations) -->
+  <script src="js/hotels-data.js"></script>
+  <!-- Authentic Real Road Network Polyline Geometry (OSRM / OpenStreetMap 561 Pairs) -->
+  <script src="js/real-routes-data.js"></script>
+  <!-- Authentic Sri Lanka Road Network & Routing Engine -->
+  <script src="js/sri-lanka-routes.js"></script>
+  <!-- 3D Tactical Cyber Map Visualization Engine -->
+  <script src="js/map3d.js"></script>
+  <!-- 3D Vehicle Models Offline Data (Zero-CORS Embedded) -->
+  <script src="js/vehicles-data.js"></script>
+  <!-- 3D Interactive Vehicle Showcase & Pax Selector Module -->
+  <script src="js/vehicle-showcase.js"></script>
+  <!-- Main Timeline Application Logic -->
+  <script src="js/app.js"></script>
+</body>
+</html>
