@@ -3731,7 +3731,7 @@ html, body {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  z-index: 9999;
+  z-index: 999999;
   pointer-events: none;
 }
 
@@ -8638,6 +8638,22 @@ html, body {
   justify-content: center;
   z-index: 100000;
   padding: 1.5rem;
+}
+
+/* Explicit Modal Stacking Hierarchy: Sub-modals always above parent modals */
+#hub-create-modal,
+#hub-delete-modal,
+#hub-publish-modal,
+#hub-link-manager-modal {
+  z-index: 100000 !important;
+}
+
+#hub-reupload-modal {
+  z-index: 100200 !important;
+}
+
+#hub-delete-link-modal {
+  z-index: 100300 !important;
 }
 
 .hub-modal-card {
