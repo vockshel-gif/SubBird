@@ -7003,6 +7003,7 @@
 
   // SunBird Cloud Link Manager Elements & State
   let hubBtnLinkManager, hubLinkMgrCountBadge;
+  let btnEditorHeaderLinkMgr, btnEditorPdfLinkMgr;
   let hubLinkManagerModal, modalLinkMgrCloseBtn, modalLinkMgrCancelBtn, btnRefreshLinks;
   let linkMgrSearchInput, linkMgrList, linkMgrLoading, linkMgrEmpty, linkMgrEmptyUploadBtn;
   let btnGotoLinkMgr;
@@ -7098,6 +7099,8 @@
     // SunBird Cloud Link Manager Elements
     hubBtnLinkManager = document.getElementById('hub-btn-link-manager');
     hubLinkMgrCountBadge = document.getElementById('hub-link-mgr-count-badge');
+    btnEditorHeaderLinkMgr = document.getElementById('btn-editor-header-link-mgr');
+    btnEditorPdfLinkMgr = document.getElementById('btn-editor-pdf-link-mgr');
     hubLinkManagerModal = document.getElementById('hub-link-manager-modal');
     modalLinkMgrCloseBtn = document.getElementById('modal-link-mgr-close-btn');
     modalLinkMgrCancelBtn = document.getElementById('modal-link-mgr-cancel-btn');
@@ -8783,6 +8786,12 @@
     // 7c. SunBird Cloud Link Manager Event Listeners
     if (hubBtnLinkManager) {
       hubBtnLinkManager.addEventListener('click', openLinkManagerModal);
+    }
+    if (btnEditorHeaderLinkMgr) {
+      btnEditorHeaderLinkMgr.addEventListener('click', openLinkManagerModal);
+    }
+    if (btnEditorPdfLinkMgr) {
+      btnEditorPdfLinkMgr.addEventListener('click', openLinkManagerModal);
     }
     if (modalLinkMgrCloseBtn) {
       modalLinkMgrCloseBtn.addEventListener('click', closeLinkManagerModal);
