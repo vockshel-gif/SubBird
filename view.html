@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SunBird Lanka Tours — Official Tour Itinerary</title>
+  <link rel="icon" type="image/png" href="Logo/Logo1.png">
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --header-bg: #0f172a;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --cyan: #38bdf8;
+      --gold: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.12);
+      --success: #10b981;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ── Header ── */
+    .viewer-header {
+      background: var(--header-bg);
+      border-bottom: 2px solid #2773b7;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-logo {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+    }
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-badge {
+      font-size: 0.68rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--cyan);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .brand-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* Header Actions */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-download {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3);
+    }
+    .btn-download:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+    }
+    .btn-whatsapp {
+      background: #128c7e;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(18, 140, 126, 0.3);
+    }
+    .btn-whatsapp:hover {
+      background: #075e54;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(18, 140, 126, 0.45);
+    }
+    .btn-secondary {
+      background: #334155;
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    /* ── Main Container ── */
+    .viewer-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 68px);
+      position: relative;
+      background: #1a202c;
+    }
+
+    /* Mobile Notice Bar */
+    .mobile-bar {
+      display: none;
+      background: #1e3a8a;
+      color: #e0e7ff;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .mobile-bar a {
+      color: #fff;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    /* PDF Frame */
+    .pdf-embed-wrapper {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #2d3748;
+      position: relative;
+    }
+    .pdf-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: #fff;
+    }
+
+    /* ── Error / Not Found Screen ── */
+    .not-found-card {
+      display: none;
+      max-width: 520px;
+      margin: 80px auto;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 32px;
+      text-align: center;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    }
+    .not-found-icon {
+      font-size: 3rem;
+      margin-bottom: 14px;
+    }
+    .not-found-card h2 {
+      font-size: 1.4rem;
+      color: #f87171;
+      margin-bottom: 10px;
+    }
+    .not-found-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .contact-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: #cbd5e1;
+    }
+    .contact-row:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ── Bottom Floating Bar (Mobile-friendly) ── */
+    .floating-bar {
+      display: none;
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      z-index: 99;
+      gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .viewer-header {
+        padding: 8px 12px;
+      }
+      .brand-sub {
+        display: none;
+      }
+      .header-actions .btn-secondary {
+        display: none;
+      }
+      .mobile-bar {
+        display: flex;
+      }
+      .floating-bar {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="viewer-header">
+    <a href="index.html" class="brand-section">
+      <img src="Logo/Logo1.png" alt="SunBird Lanka Tours" class="brand-logo" onerror="this.style.display='none'">
+      <div class="brand-text">
+        <h1>SunBird Lanka Tours <span class="brand-badge">Official Itinerary</span></h1>
+        <div class="brand-sub">Sri Lanka Tourist Board Approved &bull; SLAITO Registered</div>
+      </div>
+    </a>
+
+    <div class="header-actions">
+      <a id="btn-whatsapp" href="#" target="_blank" class="btn btn-whatsapp">
+        <span>💬</span> Inquire on WhatsApp
+      </a>
+      <a id="btn-download" href="#" download class="btn btn-download">
+        <span>📥</span> Download PDF
+      </a>
+      <button onclick="window.print()" class="btn btn-secondary">
+        <span>🖨️</span> Print
+      </button>
+      <a href="tel:+94766800130" class="btn btn-secondary">
+        <span>📞</span> (+94) 766 800 130
+      </a>
+    </div>
+  </header>
+
+  <!-- Notice for mobile devices -->
+  <div class="mobile-bar" id="mobile-bar">
+    <span>Viewing on mobile? If document does not show,</span>
+    <a id="mobile-download-link" href="#" target="_blank">Tap here to open PDF directly</a>
+  </div>
+
+  <!-- Viewer Container -->
+  <main class="viewer-container">
+    <div class="pdf-embed-wrapper" id="pdf-wrapper">
+      <object id="pdf-object" class="pdf-frame" data="" type="application/pdf">
+        <iframe id="pdf-frame" class="pdf-frame" src="">
+          <p style="padding: 40px; text-align: center; color: #cbd5e1;">
+            Your browser does not support inline PDF viewing.<br><br>
+            <a id="fallback-download" href="#" class="btn btn-download" style="display:inline-flex;">
+              📥 Click here to Download &amp; View the PDF
+            </a>
+          </p>
+        </iframe>
+      </object>
+    </div>
+
+    <!-- Error / Invalid ID State -->
+    <div class="not-found-card" id="not-found-card">
+      <div class="not-found-icon">🔒</div>
+      <h2>Itinerary Not Found or Private</h2>
+      <p>This itinerary document could not be located or may have expired. All SunBird Lanka Tours itineraries are strictly private and accessible only via direct individual links.</p>
+      
+      <div class="contact-box">
+        <div class="contact-row">
+          <span>🏢</span> <strong>SunBird Lanka Tours (Pvt) Ltd</strong>
+        </div>
+        <div class="contact-row">
+          <span>📞</span> (+94) 766 800 130 / (+94) 112 938 465
+        </div>
+        <div class="contact-row">
+          <span>✉️</span> sunbirdlankatours@gmail.com
+        </div>
+        <div class="contact-row">
+          <span>📍</span> Wattala, Sri Lanka
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <a href="https://wa.me/94766800130" target="_blank" class="btn btn-whatsapp">
+          <span>💬</span> Contact Us on WhatsApp
+        </a>
+        <a href="index.html" class="btn btn-secondary">
+          <span>🏠</span> Home Page
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mobile Floating Quick-Action Bar -->
+  <div class="floating-bar">
+    <a id="float-whatsapp" href="#" target="_blank" class="btn btn-whatsapp" style="padding: 7px 14px; font-size: 0.8rem;">
+      <span>💬</span> WhatsApp
+    </a>
+    <a id="float-download" href="#" download class="btn btn-download" style="padding: 7px 14px; font-size: 0.8rem;">
+      <span>📥</span> Download PDF
+    </a>
+  </div>
+
+  <script>
+    (function() {
+      // 1. Parse URL query params
+      const params = new URLSearchParams(window.location.search);
+      let docId = params.get('id') || params.get('file') || params.get('pdf');
+
+      const notFoundCard = document.getElementById('not-found-card');
+      const pdfWrapper = document.getElementById('pdf-wrapper');
+      const mobileBar = document.getElementById('mobile-bar');
+      const btnDownload = document.getElementById('btn-download');
+      const btnWhatsapp = document.getElementById('btn-whatsapp');
+      const floatWhatsapp = document.getElementById('float-whatsapp');
+      const floatDownload = document.getElementById('float-download');
+      const mobileDownloadLink = document.getElementById('mobile-download-link');
+      const fallbackDownload = document.getElementById('fallback-download');
+
+      // Security check: Only allow alphanumeric, dash, underscore, and .pdf extension
+      // Strictly prevent directory traversal attacks (e.g. "../" or "\" or absolute URLs)
+      const validPattern = /^[a-zA-Z0-9_-]+(\.pdf)?$/;
+
+      if (!docId || !validPattern.test(docId)) {
+        showNotFound();
+        return;
+      }
+
+      // Ensure .pdf extension
+      const filename = docId.toLowerCase().endsWith('.pdf') ? docId : docId + '.pdf';
+      const pdfPath = 'itineraries/' + filename;
+
+      // Check if file exists via HEAD request
+      fetch(pdfPath, { method: 'HEAD' })
+        .then(response => {
+          if (!response.ok) {
+            // Check fallback for root level or classic preview
+            showNotFound();
+          } else {
+            loadPdf(pdfPath, docId);
+          }
+        })
+        .catch(() => {
+          // If local or offline, still attempt to load
+          loadPdf(pdfPath, docId);
+        });
+
+      function loadPdf(url, id) {
+        document.getElementById('pdf-object').data = url + '#toolbar=1&navpanes=0&scrollbar=1';
+        document.getElementById('pdf-frame').src = url + '#toolbar=1&navpanes=0&scrollbar=1';
+
+        // Set download links
+        [btnDownload, floatDownload, fallbackDownload, mobileDownloadLink].forEach(el => {
+          if (el) {
+            el.href = url;
+            el.download = 'SunBird_Lanka_Tours_Itinerary_' + id.substring(0, 8) + '.pdf';
+          }
+        });
+
+        // Set WhatsApp inquiry link with prefilled ID
+        const waMsg = encodeURIComponent(
+          `Hello SunBird Lanka Tours, I am reviewing my official tour itinerary (Ref: ${id.substring(0, 8)}). Could you please provide further details?`
+        );
+        const waUrl = 'https://wa.me/94766800130?text=' + waMsg;
+        if (btnWhatsapp) btnWhatsapp.href = waUrl;
+        if (floatWhatsapp) floatWhatsapp.href = waUrl;
+      }
+
+      function showNotFound() {
+        pdfWrapper.style.display = 'none';
+        mobileBar.style.display = 'none';
+        notFoundCard.style.display = 'block';
+        if (btnDownload) btnDownload.style.display = 'none';
+        const floatBar = document.querySelector('.floating-bar');
+        if (floatBar) floatBar.style.display = 'none';
+      }
+    })();
+  </script>
+</body>
+</html>
