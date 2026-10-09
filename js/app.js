@@ -7001,6 +7001,32 @@
   let hubSelectedCustomFile = null;
   let hubPublishTargetItin = null;
 
+  // SunBird Cloud Link Manager Elements & State
+  let hubBtnLinkManager, hubLinkMgrCountBadge;
+  let hubLinkManagerModal, modalLinkMgrCloseBtn, modalLinkMgrCancelBtn, btnRefreshLinks;
+  let linkMgrSearchInput, linkMgrList, linkMgrLoading, linkMgrEmpty, linkMgrEmptyUploadBtn;
+  let btnGotoLinkMgr;
+  let filterBtnAll, filterBtnCustom, filterBtnGen;
+  let countAllEl, countCustomEl, countGenEl;
+
+  // Re-Upload / Replace Elements
+  let hubReuploadModal, modalReuploadCloseBtn, modalReuploadCancelBtn;
+  let reuploadTitleInput, reuploadPdfDropzone, reuploadPdfFileInput;
+  let reuploadSelectedFilePill, reuploadSelectedFileName, reuploadSelectedFileSize, reuploadRemoveSelectedFile;
+  let reuploadProgressWrap, reuploadStatusLabel, reuploadStatusPct, reuploadProgressFill, btnConfirmReupload;
+
+  // Delete Link Confirmation Elements
+  let hubDeleteLinkModal, modalDeleteLinkCloseBtn, modalDeleteLinkCancelBtn, modalDeleteLinkConfirmBtn;
+  let delLinkTitlePreview, delLinkIdPreview;
+
+  // Link Manager Internal State
+  let publishedLinks = [];
+  let currentLinkFilter = 'all';
+  let currentLinkSearch = '';
+  let pendingDeleteLinkId = null;
+  let pendingReuploadLinkId = null;
+  let pendingReuploadFile = null;
+
   function initItineraryHub() {
     // Cache Hub elements
     screenHub = document.getElementById('screen-hub');
@@ -7069,12 +7095,66 @@
     hubBtnWhatsappShare = document.getElementById('hub-btn-whatsapp-share');
     hubBtnLocalPreview = document.getElementById('hub-btn-local-preview');
 
+    // SunBird Cloud Link Manager Elements
+    hubBtnLinkManager = document.getElementById('hub-btn-link-manager');
+    hubLinkMgrCountBadge = document.getElementById('hub-link-mgr-count-badge');
+    hubLinkManagerModal = document.getElementById('hub-link-manager-modal');
+    modalLinkMgrCloseBtn = document.getElementById('modal-link-mgr-close-btn');
+    modalLinkMgrCancelBtn = document.getElementById('modal-link-mgr-cancel-btn');
+    btnRefreshLinks = document.getElementById('btn-refresh-links');
+    linkMgrSearchInput = document.getElementById('link-mgr-search-input');
+    linkMgrList = document.getElementById('link-mgr-list');
+    linkMgrLoading = document.getElementById('link-mgr-loading');
+    linkMgrEmpty = document.getElementById('link-mgr-empty');
+    linkMgrEmptyUploadBtn = document.getElementById('link-mgr-empty-upload-btn');
+    btnGotoLinkMgr = document.getElementById('btn-goto-link-mgr');
+
+    filterBtnAll = document.getElementById('filter-btn-all');
+    filterBtnCustom = document.getElementById('filter-btn-custom');
+    filterBtnGen = document.getElementById('filter-btn-gen');
+    countAllEl = document.getElementById('link-mgr-count-all');
+    countCustomEl = document.getElementById('link-mgr-count-custom');
+    countGenEl = document.getElementById('link-mgr-count-gen');
+
+    // Re-Upload / Replace Elements
+    hubReuploadModal = document.getElementById('hub-reupload-modal');
+    modalReuploadCloseBtn = document.getElementById('modal-reupload-close-btn');
+    modalReuploadCancelBtn = document.getElementById('modal-reupload-cancel-btn');
+    reuploadTitleInput = document.getElementById('reupload-title-input');
+    reuploadPdfDropzone = document.getElementById('reupload-pdf-dropzone');
+    reuploadPdfFileInput = document.getElementById('reupload-pdf-file-input');
+    reuploadSelectedFilePill = document.getElementById('reupload-selected-file-pill');
+    reuploadSelectedFileName = document.getElementById('reupload-selected-file-name');
+    reuploadSelectedFileSize = document.getElementById('reupload-selected-file-size');
+    reuploadRemoveSelectedFile = document.getElementById('reupload-remove-selected-file');
+    reuploadProgressWrap = document.getElementById('reupload-progress-wrap');
+    reuploadStatusLabel = document.getElementById('reupload-status-label');
+    reuploadStatusPct = document.getElementById('reupload-status-pct');
+    reuploadProgressFill = document.getElementById('reupload-progress-fill');
+    btnConfirmReupload = document.getElementById('btn-confirm-reupload');
+
+    // Delete Link Elements
+    hubDeleteLinkModal = document.getElementById('hub-delete-link-modal');
+    modalDeleteLinkCloseBtn = document.getElementById('modal-delete-link-close-btn');
+    modalDeleteLinkCancelBtn = document.getElementById('modal-delete-link-cancel-btn');
+    modalDeleteLinkConfirmBtn = document.getElementById('modal-delete-link-confirm-btn');
+    delLinkTitlePreview = document.getElementById('del-link-title-preview');
+    delLinkIdPreview = document.getElementById('del-link-id-preview');
+
     // Editor return button & title
     btnReturnHub = document.getElementById('btn-return-hub');
     editorActiveTitleEl = document.getElementById('editor-active-itin-title');
 
     // Load itineraries from storage
     loadItinerariesFromStorage();
+
+    // Initial silent query of cloud database to show live badge count
+    if (window.SunBirdFirebase) {
+      window.SunBirdFirebase.listRecords().then((records) => {
+        publishedLinks = records || [];
+        updateLinkCounters();
+      }).catch(() => {});
+    }
 
     // Check saved active itinerary or default
     try {
@@ -8025,6 +8105,390 @@
     }
 
     showToast('Client link generated successfully!');
+
+    // Update cloud link cache and counters
+    if (window.SunBirdFirebase) {
+      window.SunBirdFirebase.listRecords().then((records) => {
+        publishedLinks = records || [];
+        updateLinkCounters();
+      }).catch(() => {});
+    }
+  }
+
+  /* ── SunBird Cloud Link Manager Functions ── */
+
+  async function openLinkManagerModal() {
+    if (!hubLinkManagerModal) return;
+    hubLinkManagerModal.style.display = 'flex';
+    currentLinkSearch = '';
+    if (linkMgrSearchInput) linkMgrSearchInput.value = '';
+    currentLinkFilter = 'all';
+    updateFilterTabsUI();
+    await fetchPublishedLinks();
+  }
+
+  function closeLinkManagerModal() {
+    if (hubLinkManagerModal) hubLinkManagerModal.style.display = 'none';
+  }
+
+  async function fetchPublishedLinks() {
+    if (!window.SunBirdFirebase) {
+      console.warn('Firebase service unavailable.');
+      return;
+    }
+    if (linkMgrLoading) linkMgrLoading.style.display = 'flex';
+    if (linkMgrEmpty) linkMgrEmpty.style.display = 'none';
+    if (linkMgrList) linkMgrList.innerHTML = '';
+
+    try {
+      publishedLinks = await window.SunBirdFirebase.listRecords();
+      updateLinkCounters();
+      renderLinkManagerList();
+    } catch (err) {
+      console.error('Error fetching links from Firebase:', err);
+      showToast('Could not load links from Firebase: ' + (err.message || 'Error'));
+    } finally {
+      if (linkMgrLoading) linkMgrLoading.style.display = 'none';
+    }
+  }
+
+  function updateLinkCounters() {
+    const total = publishedLinks.length;
+    const custom = publishedLinks.filter(p => p.type === 'custom_pdf').length;
+    const gen = publishedLinks.filter(p => p.type !== 'custom_pdf').length;
+
+    if (countAllEl) countAllEl.textContent = total;
+    if (countCustomEl) countCustomEl.textContent = custom;
+    if (countGenEl) countGenEl.textContent = gen;
+
+    if (hubLinkMgrCountBadge) {
+      if (total > 0) {
+        hubLinkMgrCountBadge.textContent = total;
+        hubLinkMgrCountBadge.style.display = 'inline-block';
+      } else {
+        hubLinkMgrCountBadge.style.display = 'none';
+      }
+    }
+  }
+
+  function updateFilterTabsUI() {
+    const tabs = [
+      { el: filterBtnAll, type: 'all' },
+      { el: filterBtnCustom, type: 'custom_pdf' },
+      { el: filterBtnGen, type: 'current_generated' }
+    ];
+    tabs.forEach(t => {
+      if (t.el) t.el.classList.toggle('active', currentLinkFilter === t.type);
+    });
+  }
+
+  function formatLinkDate(timestamp) {
+    if (!timestamp) return 'Recent';
+    try {
+      const d = new Date(timestamp);
+      if (isNaN(d.getTime())) return 'Recent';
+      return d.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch(e) {
+      return 'Recent';
+    }
+  }
+
+  function renderLinkManagerList() {
+    if (!linkMgrList) return;
+    linkMgrList.innerHTML = '';
+
+    let filtered = publishedLinks.slice();
+
+    // 1. Filter by category
+    if (currentLinkFilter === 'custom_pdf') {
+      filtered = filtered.filter(item => item.type === 'custom_pdf');
+    } else if (currentLinkFilter === 'current_generated') {
+      filtered = filtered.filter(item => item.type !== 'custom_pdf');
+    }
+
+    // 2. Filter by search query
+    if (currentLinkSearch) {
+      const q = currentLinkSearch.toLowerCase().trim();
+      filtered = filtered.filter(item => {
+        const titleMatch = (item.title || '').toLowerCase().includes(q);
+        const idMatch = (item.id || '').toLowerCase().includes(q);
+        const clientMatch = (item.clientName || '').toLowerCase().includes(q);
+        const fileMatch = (item.fileName || '').toLowerCase().includes(q);
+        return titleMatch || idMatch || clientMatch || fileMatch;
+      });
+    }
+
+    if (filtered.length === 0) {
+      if (linkMgrEmpty) linkMgrEmpty.style.display = 'flex';
+      return;
+    }
+
+    if (linkMgrEmpty) linkMgrEmpty.style.display = 'none';
+
+    filtered.forEach(item => {
+      const clientUrl = window.SunBirdFirebase.getClientLink(item.id);
+      const isCustom = item.type === 'custom_pdf';
+      const badgeClass = isCustom ? 'badge-custom-pdf' : 'badge-current-gen';
+      const badgeText = isCustom ? 'Custom PDF' : 'Generated Itinerary';
+      const dateText = formatLinkDate(item.updatedAt || item.createdAt);
+      const waMsg = encodeURIComponent(`Hello! Here is your official SunBird Lanka Tours itinerary for "${item.title || 'Trip'}":\n${clientUrl}\n\nPlease review and let us know if you need any adjustments.`);
+      const waUrl = `https://wa.me/?text=${waMsg}`;
+
+      const card = document.createElement('div');
+      card.className = 'link-item-card';
+      card.id = `link-card-${item.id}`;
+
+      card.innerHTML = `
+        <div class="link-item-top">
+          <div class="link-item-info">
+            <div class="link-item-title-row">
+              <span class="link-item-title">${escapeHtml(item.title || 'Untitled Itinerary')}</span>
+              <span class="link-item-type-badge ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="link-item-meta">
+              <span>📅 ${dateText}</span>
+              ${item.fileName ? `<span>📄 ${escapeHtml(item.fileName)}</span>` : ''}
+              <span class="link-item-id-code">ID: ${item.id.substring(0, 13)}...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="link-item-url-row">
+          <input type="text" class="link-item-url-input" value="${clientUrl}" readonly>
+          <button type="button" class="btn-item-copy" data-link="${clientUrl}" title="Copy Link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy</span>
+          </button>
+        </div>
+
+        <div class="link-item-actions">
+          <div class="link-item-actions-left">
+            <a href="${clientUrl}" target="_blank" class="btn-link-action btn-action-open" title="Open client portal link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              <span>Open Portal</span>
+            </a>
+            <a href="${waUrl}" target="_blank" class="btn-link-action btn-action-wa" title="Share via WhatsApp">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z"/>
+              </svg>
+              <span>WhatsApp</span>
+            </a>
+            <button type="button" class="btn-link-action btn-action-reupload" data-id="${item.id}" title="Re-upload a new PDF for this exact link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>Update PDF</span>
+            </button>
+          </div>
+          <div class="link-item-actions-right">
+            <button type="button" class="btn-link-action btn-action-delete" data-id="${item.id}" title="Delete link and PDF permanently">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Copy Button
+      const copyBtn = card.querySelector('.btn-item-copy');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+          const url = copyBtn.getAttribute('data-link');
+          const origText = copyBtn.innerHTML;
+          const setCopied = () => {
+            copyBtn.innerHTML = `<span>Copied!</span>`;
+            showToast('Link copied to clipboard!');
+            setTimeout(() => { copyBtn.innerHTML = origText; }, 2000);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(setCopied).catch(setCopied);
+          } else {
+            setCopied();
+          }
+        });
+      }
+
+      // Re-upload Button
+      const reuploadBtn = card.querySelector('.btn-action-reupload');
+      if (reuploadBtn) {
+        reuploadBtn.addEventListener('click', () => {
+          openReuploadModal(item.id);
+        });
+      }
+
+      // Delete Button
+      const delBtn = card.querySelector('.btn-action-delete');
+      if (delBtn) {
+        delBtn.addEventListener('click', () => {
+          openDeleteLinkModal(item.id);
+        });
+      }
+
+      linkMgrList.appendChild(card);
+    });
+  }
+
+  /* ── Re-Upload / Replace PDF Logic ── */
+
+  function openReuploadModal(id) {
+    const record = publishedLinks.find(l => l.id === id);
+    if (!record) return;
+
+    pendingReuploadLinkId = id;
+    pendingReuploadFile = null;
+
+    if (reuploadTitleInput) {
+      reuploadTitleInput.value = record.title || '';
+    }
+    if (reuploadPdfFileInput) {
+      reuploadPdfFileInput.value = '';
+    }
+    if (reuploadSelectedFilePill) {
+      reuploadSelectedFilePill.style.display = 'none';
+    }
+    if (reuploadProgressWrap) {
+      reuploadProgressWrap.style.display = 'none';
+    }
+    if (btnConfirmReupload) {
+      btnConfirmReupload.disabled = true;
+    }
+
+    if (hubReuploadModal) {
+      hubReuploadModal.style.display = 'flex';
+    }
+  }
+
+  function closeReuploadModal() {
+    if (hubReuploadModal) hubReuploadModal.style.display = 'none';
+    pendingReuploadLinkId = null;
+    pendingReuploadFile = null;
+  }
+
+  function handleReuploadFileSelected(file) {
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+      showToast('Please select a valid PDF file (.pdf)');
+      return;
+    }
+    pendingReuploadFile = file;
+    if (reuploadSelectedFileName) reuploadSelectedFileName.textContent = file.name;
+    if (reuploadSelectedFileSize) {
+      const sizeKb = Math.round(file.size / 1024);
+      const sizeStr = sizeKb > 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`;
+      reuploadSelectedFileSize.textContent = `(${sizeStr})`;
+    }
+    if (reuploadSelectedFilePill) reuploadSelectedFilePill.style.display = 'inline-flex';
+    if (btnConfirmReupload) btnConfirmReupload.disabled = false;
+  }
+
+  async function executeReupload() {
+    if (!pendingReuploadLinkId || !pendingReuploadFile) {
+      showToast('Please select a replacement PDF file.');
+      return;
+    }
+    if (!window.SunBirdFirebase) {
+      alert('Firebase service is not loaded.');
+      return;
+    }
+
+    const btn = btnConfirmReupload;
+    if (btn) btn.disabled = true;
+
+    if (reuploadProgressWrap) reuploadProgressWrap.style.display = 'flex';
+
+    const updateProgress = (pct, label) => {
+      if (reuploadProgressFill) reuploadProgressFill.style.width = pct + '%';
+      if (reuploadStatusPct) reuploadStatusPct.textContent = pct + '%';
+      if (reuploadStatusLabel && label) reuploadStatusLabel.textContent = label;
+    };
+
+    try {
+      updateProgress(20, 'Encoding updated PDF document...');
+      const newTitle = (reuploadTitleInput && reuploadTitleInput.value.trim()) || null;
+
+      updateProgress(45, 'Overwriting file in Cloud Storage...');
+      await window.SunBirdFirebase.updateRecordPDF(pendingReuploadLinkId, pendingReuploadFile, newTitle, (pct) => {
+        const mapped = Math.round(45 + (pct * 0.45));
+        updateProgress(mapped, `Uploading PDF (${pct}%)...`);
+      });
+
+      updateProgress(100, 'Cloud record updated successfully!');
+      showToast('PDF updated successfully! Client link remains unchanged.');
+
+      closeReuploadModal();
+      await fetchPublishedLinks();
+
+    } catch (err) {
+      console.error('Re-upload error:', err);
+      alert('Error updating PDF: ' + (err.message || err));
+      if (btn) btn.disabled = false;
+      if (reuploadProgressWrap) reuploadProgressWrap.style.display = 'none';
+    }
+  }
+
+  /* ── Delete Link Logic ── */
+
+  function openDeleteLinkModal(id) {
+    const record = publishedLinks.find(l => l.id === id);
+    if (!record) return;
+
+    pendingDeleteLinkId = id;
+    if (delLinkTitlePreview) delLinkTitlePreview.textContent = record.title || 'Untitled';
+    if (delLinkIdPreview) delLinkIdPreview.textContent = `ID: ${record.id}`;
+
+    if (hubDeleteLinkModal) hubDeleteLinkModal.style.display = 'flex';
+  }
+
+  function closeDeleteLinkModal() {
+    if (hubDeleteLinkModal) hubDeleteLinkModal.style.display = 'none';
+    pendingDeleteLinkId = null;
+  }
+
+  async function executeDeleteLink() {
+    if (!pendingDeleteLinkId) return;
+    if (!window.SunBirdFirebase) {
+      alert('Firebase service is not loaded.');
+      return;
+    }
+
+    try {
+      const idToDelete = pendingDeleteLinkId;
+      closeDeleteLinkModal();
+
+      // Optimistic UI removal
+      const cardEl = document.getElementById(`link-card-${idToDelete}`);
+      if (cardEl) {
+        cardEl.style.opacity = '0.4';
+        cardEl.style.pointerEvents = 'none';
+      }
+
+      await window.SunBirdFirebase.deleteRecord(idToDelete);
+      showToast('Link & PDF permanently deleted from Firebase.');
+      await fetchPublishedLinks();
+
+    } catch (err) {
+      console.error('Delete link error:', err);
+      alert('Could not delete link from Firebase: ' + (err.message || err));
+      await fetchPublishedLinks();
+    }
   }
 
   function setupHubEventListeners() {
@@ -8316,12 +8780,131 @@
       });
     }
 
+    // 7c. SunBird Cloud Link Manager Event Listeners
+    if (hubBtnLinkManager) {
+      hubBtnLinkManager.addEventListener('click', openLinkManagerModal);
+    }
+    if (modalLinkMgrCloseBtn) {
+      modalLinkMgrCloseBtn.addEventListener('click', closeLinkManagerModal);
+    }
+    if (modalLinkMgrCancelBtn) {
+      modalLinkMgrCancelBtn.addEventListener('click', closeLinkManagerModal);
+    }
+    if (btnRefreshLinks) {
+      btnRefreshLinks.addEventListener('click', () => {
+        showToast('Refreshing links from Firebase...');
+        fetchPublishedLinks();
+      });
+    }
+    if (btnGotoLinkMgr) {
+      btnGotoLinkMgr.addEventListener('click', () => {
+        closePublishModal();
+        openLinkManagerModal();
+      });
+    }
+    if (linkMgrEmptyUploadBtn) {
+      linkMgrEmptyUploadBtn.addEventListener('click', () => {
+        closeLinkManagerModal();
+        openPublishModal('custom');
+      });
+    }
+
+    if (linkMgrSearchInput) {
+      linkMgrSearchInput.addEventListener('input', (e) => {
+        currentLinkSearch = e.target.value;
+        renderLinkManagerList();
+      });
+    }
+
+    if (filterBtnAll) {
+      filterBtnAll.addEventListener('click', () => {
+        currentLinkFilter = 'all';
+        updateFilterTabsUI();
+        renderLinkManagerList();
+      });
+    }
+    if (filterBtnCustom) {
+      filterBtnCustom.addEventListener('click', () => {
+        currentLinkFilter = 'custom_pdf';
+        updateFilterTabsUI();
+        renderLinkManagerList();
+      });
+    }
+    if (filterBtnGen) {
+      filterBtnGen.addEventListener('click', () => {
+        currentLinkFilter = 'current_generated';
+        updateFilterTabsUI();
+        renderLinkManagerList();
+      });
+    }
+
+    // Re-upload Modal Listeners
+    if (modalReuploadCloseBtn) {
+      modalReuploadCloseBtn.addEventListener('click', closeReuploadModal);
+    }
+    if (modalReuploadCancelBtn) {
+      modalReuploadCancelBtn.addEventListener('click', closeReuploadModal);
+    }
+    if (reuploadPdfDropzone) {
+      reuploadPdfDropzone.addEventListener('click', (e) => {
+        if (e.target.closest('#reupload-remove-selected-file')) return;
+        if (reuploadPdfFileInput) reuploadPdfFileInput.click();
+      });
+      reuploadPdfDropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        reuploadPdfDropzone.classList.add('dragover');
+      });
+      reuploadPdfDropzone.addEventListener('dragleave', () => {
+        reuploadPdfDropzone.classList.remove('dragover');
+      });
+      reuploadPdfDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        reuploadPdfDropzone.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleReuploadFileSelected(e.dataTransfer.files[0]);
+        }
+      });
+    }
+    if (reuploadPdfFileInput) {
+      reuploadPdfFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          handleReuploadFileSelected(e.target.files[0]);
+        }
+      });
+    }
+    if (reuploadRemoveSelectedFile) {
+      reuploadRemoveSelectedFile.addEventListener('click', (e) => {
+        e.stopPropagation();
+        pendingReuploadFile = null;
+        if (reuploadPdfFileInput) reuploadPdfFileInput.value = '';
+        if (reuploadSelectedFilePill) reuploadSelectedFilePill.style.display = 'none';
+        if (btnConfirmReupload) btnConfirmReupload.disabled = true;
+      });
+    }
+    if (btnConfirmReupload) {
+      btnConfirmReupload.addEventListener('click', executeReupload);
+    }
+
+    // Delete Link Confirmation Listeners
+    if (modalDeleteLinkCloseBtn) {
+      modalDeleteLinkCloseBtn.addEventListener('click', closeDeleteLinkModal);
+    }
+    if (modalDeleteLinkCancelBtn) {
+      modalDeleteLinkCancelBtn.addEventListener('click', closeDeleteLinkModal);
+    }
+    if (modalDeleteLinkConfirmBtn) {
+      modalDeleteLinkConfirmBtn.addEventListener('click', executeDeleteLink);
+    }
+
     // Close modals on Escape key
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeCreateModal();
         closeDeleteModal();
         closePublishModal();
+        closeLinkManagerModal();
+        closeReuploadModal();
+        closeDeleteLinkModal();
       }
     });
 
@@ -8341,6 +8924,21 @@
         if (e.target === hubPublishModal) closePublishModal();
       });
     }
+    if (hubLinkManagerModal) {
+      hubLinkManagerModal.addEventListener('click', (e) => {
+        if (e.target === hubLinkManagerModal) closeLinkManagerModal();
+      });
+    }
+    if (hubReuploadModal) {
+      hubReuploadModal.addEventListener('click', (e) => {
+        if (e.target === hubReuploadModal) closeReuploadModal();
+      });
+    }
+    if (hubDeleteLinkModal) {
+      hubDeleteLinkModal.addEventListener('click', (e) => {
+        if (e.target === hubDeleteLinkModal) closeDeleteLinkModal();
+      });
+    }
   }
 
   // Export functions to global scope for debugging & test hooks
@@ -8352,5 +8950,7 @@
   window.syncLiveItineraryToStorage = syncLiveItineraryToStorage;
   window.openPublishModal = openPublishModal;
   window.closePublishModal = closePublishModal;
+  window.openLinkManagerModal = openLinkManagerModal;
+  window.closeLinkManagerModal = closeLinkManagerModal;
 
 })();
