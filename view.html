@@ -442,7 +442,7 @@
           }
 
           const record = await window.SunBirdFirebase.getRecord(itineraryId);
-          if (!record || !record.pdfUrl) {
+          if (!record || (!record.pdfUrl && !record.pdfBase64)) {
             showError('This itinerary does not exist or may have been archived. Please contact SunBird Lanka Tours for an updated link.');
             return;
           }
@@ -466,16 +466,41 @@
           }
           bannerSubtitle.innerHTML = subText;
 
+          // Convert Base64 to Blob URL if available for 100% CORS-free instantaneous display
+          let pdfDisplayUrl = '';
+          if (record.pdfBase64) {
+            try {
+              const base64Data = record.pdfBase64.split(';base64,')[1] || record.pdfBase64;
+              const byteCharacters = atob(base64Data);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+              const blob = new Blob([byteArray], { type: 'application/pdf' });
+              pdfDisplayUrl = URL.createObjectURL(blob);
+            } catch(e) {
+              console.warn('Could not construct blob from base64:', e);
+              pdfDisplayUrl = record.pdfBase64;
+            }
+          } else if (record.pdfUrl) {
+            pdfDisplayUrl = record.pdfUrl;
+          }
+
+          if (!pdfDisplayUrl) {
+            showError('This itinerary record has no PDF document attached.');
+            return;
+          }
+
           // Wire up Actions
-          btnDownloadLink.href = record.pdfUrl;
+          btnDownloadLink.href = pdfDisplayUrl;
           btnDownloadLink.setAttribute('download', (record.title || 'SunBird_Itinerary').replace(/[^a-zA-Z0-9_\-]/g, '_') + '.pdf');
 
           const waMsg = encodeURIComponent(`Hello SunBird Lanka Tours, I am reviewing my itinerary "${record.title || 'Tour Itinerary'}" (ID: ${itineraryId}). Could you please advise on booking confirmation?`);
           btnWhatsappLink.href = `https://wa.me/94770000000?text=${waMsg}`;
 
           // Embed PDF inside iframe
-          // For optimal cross-device view, we use the direct PDF URL with embedded PDF viewer toolbar controls
-          pdfFrame.src = record.pdfUrl + '#toolbar=1&navpanes=0&scrollbar=1';
+          pdfFrame.src = pdfDisplayUrl + (pdfDisplayUrl.startsWith('blob:') ? '' : '#toolbar=1&navpanes=0&scrollbar=1');
           pdfFrame.style.display = 'block';
           loadingScreen.style.display = 'none';
 

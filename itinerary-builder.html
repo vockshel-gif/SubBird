@@ -1444,7 +1444,8 @@ body {
         id: uploadResult.id,
         title: cfgTitle.value || 'Official Tour Itinerary',
         type: 'classic_generated',
-        pdfUrl: uploadResult.downloadUrl,
+        pdfUrl: uploadResult.downloadUrl || '',
+        pdfBase64: uploadResult.pdfBase64 || '',
         from: cfgFrom.value,
         to: cfgTo.value,
         adults: cfgAdults.value
@@ -1506,7 +1507,8 @@ body {
         id: uploadResult.id,
         title: itinTitle,
         type: 'custom_pdf',
-        pdfUrl: uploadResult.downloadUrl,
+        pdfUrl: uploadResult.downloadUrl || '',
+        pdfBase64: uploadResult.pdfBase64 || '',
         fileName: file.name
       });
 

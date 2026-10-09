@@ -64,60 +64,102 @@
     });
   }
 
+  // Convert Blob or File to Base64 Data URL
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
   /**
-   * Uploads a PDF Blob or File to Firebase Storage
+   * Uploads a PDF Blob or File to Firebase.
+   * Resilient implementation: Converts to Base64 for instant Realtime Database
+   * persistence (bypassing any browser origin: 'null' / Storage CORS preflight blocks),
+   * while also attempting Storage upload when available.
+   *
    * @param {Blob|File} pdfData - The PDF blob or file to upload
    * @param {string} customId - Optional custom UUID
    * @param {function} onProgress - Optional progress callback: (percent) => {}
-   * @returns {Promise<{ id: string, downloadUrl: string, storagePath: string }>}
+   * @returns {Promise<{ id: string, downloadUrl: string, pdfBase64: string, storagePath: string }>}
    */
   async function uploadPDF(pdfData, customId = null, onProgress = null) {
     if (!initFirebase()) throw new Error('Firebase could not be initialized.');
 
     const id = customId || generateUUID();
+    let pdfBase64 = null;
+
+    if (onProgress) onProgress(20);
+
+    // 1. Encode to Base64 for resilient cloud DB storage
+    try {
+      pdfBase64 = await blobToBase64(pdfData);
+      if (onProgress) onProgress(50);
+    } catch (e) {
+      console.warn('Could not encode PDF to base64:', e);
+    }
+
+    let downloadUrl = '';
     const storagePath = `itineraries/${id}.pdf`;
-    const storageRef = storage.ref(storagePath);
 
-    const metadata = {
-      contentType: 'application/pdf',
-      customMetadata: {
-        itineraryId: id,
-        uploadedAt: new Date().toISOString()
-      }
-    };
-
-    const uploadTask = storageRef.put(pdfData, metadata);
-
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        firebase.storage.TaskEvent.STATE_CHANGED,
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (onProgress) onProgress(Math.round(progress));
-        },
-        (error) => {
-          console.error('Firebase upload error:', error);
-          reject(error);
-        },
-        async () => {
-          try {
-            const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-            resolve({
-              id,
-              downloadUrl,
-              storagePath
-            });
-          } catch (err) {
-            reject(err);
+    // 2. Attempt Storage upload only if running via HTTP/HTTPS and storage bucket is available
+    if (storage && window.location.protocol.startsWith('http')) {
+      try {
+        const storageRef = storage.ref(storagePath);
+        const metadata = {
+          contentType: 'application/pdf',
+          customMetadata: {
+            itineraryId: id,
+            uploadedAt: new Date().toISOString()
           }
-        }
-      );
-    });
+        };
+
+        const uploadTask = storageRef.put(pdfData, metadata);
+
+        await new Promise((resolve) => {
+          // Timeout guard in case preflight hangs
+          const timer = setTimeout(() => resolve(), 3500);
+
+          uploadTask.on(
+            firebase.storage.TaskEvent.STATE_CHANGED,
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              if (onProgress) onProgress(50 + Math.round(progress * 0.4));
+            },
+            (error) => {
+              clearTimeout(timer);
+              console.warn('Firebase Storage upload not available (saved securely via Realtime Database):', error.message || error);
+              resolve();
+            },
+            async () => {
+              clearTimeout(timer);
+              try {
+                downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+              } catch (e) {}
+              resolve();
+            }
+          );
+        });
+      } catch (err) {
+        console.warn('Firebase Storage skipped (fallback to Realtime Database):', err.message || err);
+      }
+    }
+
+    if (onProgress) onProgress(100);
+
+    return {
+      id,
+      downloadUrl,
+      pdfBase64,
+      storagePath
+    };
   }
 
   /**
    * Saves itinerary metadata into Firebase Realtime Database
-   * @param {Object} record - { id, title, type, pdfUrl, ... }
+   * @param {Object} record - { id, title, type, pdfUrl, pdfBase64, ... }
    */
   async function saveRecord(record) {
     if (!initFirebase()) throw new Error('Firebase could not be initialized.');
@@ -128,6 +170,7 @@
       title: record.title || 'SunBird Lanka Tours Itinerary',
       type: record.type || 'classic_generated', // 'classic_generated' or 'custom_pdf'
       pdfUrl: record.pdfUrl || '',
+      pdfBase64: record.pdfBase64 || '',
       from: record.from || '',
       to: record.to || '',
       adults: record.adults || '',
@@ -147,24 +190,29 @@
    */
   async function getRecord(id) {
     if (!initFirebase()) throw new Error('Firebase could not be initialized.');
-    const snapshot = await database.ref(`itineraries/${id}`).once('value');
-    if (!snapshot.exists()) {
-      // Fallback: check if the file exists directly in storage
-      try {
-        const storageRef = storage.ref(`itineraries/${id}.pdf`);
-        const downloadUrl = await storageRef.getDownloadURL();
-        return {
-          id: id,
-          title: 'Official Tour Itinerary & Quotation',
-          type: 'custom_pdf',
-          pdfUrl: downloadUrl,
-          createdAt: Date.now()
-        };
-      } catch (e) {
-        return null;
+    try {
+      const snapshot = await database.ref(`itineraries/${id}`).once('value');
+      if (snapshot.exists()) {
+        return snapshot.val();
       }
+    } catch (dbErr) {
+      console.warn('Realtime Database lookup error:', dbErr);
     }
-    return snapshot.val();
+
+    // Fallback: check if the file exists directly in storage
+    try {
+      const storageRef = storage.ref(`itineraries/${id}.pdf`);
+      const downloadUrl = await storageRef.getDownloadURL();
+      return {
+        id: id,
+        title: 'Official Tour Itinerary & Quotation',
+        type: 'custom_pdf',
+        pdfUrl: downloadUrl,
+        createdAt: Date.now()
+      };
+    } catch (e) {
+      return null;
+    }
   }
 
   /**

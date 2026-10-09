@@ -7917,7 +7917,8 @@
         id: uploadResult.id,
         title: targetTitle,
         type: 'current_generated',
-        pdfUrl: uploadResult.downloadUrl,
+        pdfUrl: uploadResult.downloadUrl || '',
+        pdfBase64: uploadResult.pdfBase64 || '',
         from: arrivalDateStr,
         to: toDateStr,
         adults: itinData.touristsCount || 16,
@@ -7982,7 +7983,8 @@
         id: uploadResult.id,
         title: title,
         type: 'custom_pdf',
-        pdfUrl: uploadResult.downloadUrl,
+        pdfUrl: uploadResult.downloadUrl || '',
+        pdfBase64: uploadResult.pdfBase64 || '',
         clientName: title,
         fileName: file.name
       });
