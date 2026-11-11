@@ -1,0 +1,224 @@
+{
+  "airport": {
+    "main": "assets/journey/airport.jpg",
+    "thumb": "assets/journey/thumbs/airport.jpg",
+    "width": 1024,
+    "height": 647
+  },
+  "colombo": {
+    "main": "assets/journey/colombo.jpg",
+    "thumb": "assets/journey/thumbs/colombo.jpg",
+    "width": 960,
+    "height": 1200
+  },
+  "negombo": {
+    "main": "assets/journey/negombo.jpg",
+    "thumb": "assets/journey/thumbs/negombo.jpg",
+    "width": 1200,
+    "height": 675
+  },
+  "sigiriya": {
+    "main": "assets/journey/sigiriya.jpg",
+    "thumb": "assets/journey/thumbs/sigiriya.jpg",
+    "width": 1200,
+    "height": 800
+  },
+  "dambulla": {
+    "main": "assets/journey/dambulla.jpg",
+    "thumb": "assets/journey/thumbs/dambulla.jpg",
+    "width": 1200,
+    "height": 1077
+  },
+  "kandy": {
+    "main": "assets/journey/kandy.jpg",
+    "thumb": "assets/journey/thumbs/kandy.jpg",
+    "width": 1200,
+    "height": 600
+  },
+  "nuwara-eliya": {
+    "main": "assets/journey/nuwara-eliya.jpg",
+    "thumb": "assets/journey/thumbs/nuwara-eliya.jpg",
+    "width": 1200,
+    "height": 900
+  },
+  "tea": {
+    "main": "assets/journey/tea.jpg",
+    "thumb": "assets/journey/thumbs/tea.jpg",
+    "width": 1200,
+    "height": 803
+  },
+  "ella": {
+    "main": "assets/journey/ella.jpg",
+    "thumb": "assets/journey/thumbs/ella.jpg",
+    "width": 1097,
+    "height": 1200
+  },
+  "yala": {
+    "main": "assets/journey/yala.jpg",
+    "thumb": "assets/journey/thumbs/yala.jpg",
+    "width": 927,
+    "height": 1200
+  },
+  "yala-beach": {
+    "main": "assets/journey/yala-beach.jpg",
+    "thumb": "assets/journey/thumbs/yala-beach.jpg",
+    "width": 1200,
+    "height": 675
+  },
+  "udawalawe": {
+    "main": "assets/journey/udawalawe.jpg",
+    "thumb": "assets/journey/thumbs/udawalawe.jpg",
+    "width": 1200,
+    "height": 800
+  },
+  "mirissa": {
+    "main": "assets/journey/mirissa.jpg",
+    "thumb": "assets/journey/thumbs/mirissa.jpg",
+    "width": 1200,
+    "height": 900
+  },
+  "galle": {
+    "main": "assets/journey/galle.jpg",
+    "thumb": "assets/journey/thumbs/galle.jpg",
+    "width": 1200,
+    "height": 898
+  },
+  "bentota": {
+    "main": "assets/journey/bentota.jpg",
+    "thumb": "assets/journey/thumbs/bentota.jpg",
+    "width": 1200,
+    "height": 796
+  },
+  "unawatuna": {
+    "main": "assets/journey/unawatuna.jpg",
+    "thumb": "assets/journey/thumbs/unawatuna.jpg",
+    "width": 1200,
+    "height": 819
+  },
+  "weligama": {
+    "main": "assets/journey/weligama.jpg",
+    "thumb": "assets/journey/thumbs/weligama.jpg",
+    "width": 1200,
+    "height": 900
+  },
+  "hikkaduwa": {
+    "main": "assets/journey/hikkaduwa.jpg",
+    "thumb": "assets/journey/thumbs/hikkaduwa.jpg",
+    "width": 1200,
+    "height": 900
+  },
+  "tangalle": {
+    "main": "assets/journey/tangalle.jpg",
+    "thumb": "assets/journey/thumbs/tangalle.jpg",
+    "width": 1200,
+    "height": 796
+  },
+  "anuradhapura": {
+    "main": "assets/journey/anuradhapura.jpg",
+    "thumb": "assets/journey/thumbs/anuradhapura.jpg",
+    "width": 1200,
+    "height": 600
+  },
+  "polonnaruwa": {
+    "main": "assets/journey/polonnaruwa.jpg",
+    "thumb": "assets/journey/thumbs/polonnaruwa.jpg",
+    "width": 1200,
+    "height": 675
+  },
+  "trincomalee": {
+    "main": "assets/journey/trincomalee.jpg",
+    "thumb": "assets/journey/thumbs/trincomalee.jpg",
+    "width": 1200,
+    "height": 800
+  },
+  "pigeon-island": {
+    "main": "assets/journey/pigeon-island.jpg",
+    "thumb": "assets/journey/thumbs/pigeon-island.jpg",
+    "width": 1200,
+    "height": 720
+  },
+  "passikudah": {
+    "main": "assets/journey/passikudah.jpg",
+    "thumb": "assets/journey/thumbs/passikudah.jpg",
+    "width": 1200,
+    "height": 800
+  },
+  "arugam-bay": {
+    "main": "assets/journey/arugam-bay.jpg",
+    "thumb": "assets/journey/thumbs/arugam-bay.jpg",
+    "width": 1200,
+    "height": 675
+  },
+  "jaffna": {
+    "main": "assets/journey/jaffna.jpg",
+    "thumb": "assets/journey/thumbs/jaffna.jpg",
+    "width": 1200,
+    "height": 856
+  },
+  "horton-plains": {
+    "main": "assets/journey/horton-plains.jpg",
+    "thumb": "assets/journey/thumbs/horton-plains.jpg",
+    "width": 1024,
+    "height": 768
+  },
+  "adams-peak": {
+    "main": "assets/journey/adams-peak.jpg",
+    "thumb": "assets/journey/thumbs/adams-peak.jpg",
+    "width": 1200,
+    "height": 900
+  },
+  "sinharaja": {
+    "main": "assets/journey/sinharaja.jpg",
+    "thumb": "assets/journey/thumbs/sinharaja.jpg",
+    "width": 1200,
+    "height": 900
+  },
+  "kitulgala": {
+    "main": "assets/journey/kitulgala.jpg",
+    "thumb": "assets/journey/thumbs/kitulgala.jpg",
+    "width": 400,
+    "height": 300
+  },
+  "minneriya": {
+    "main": "assets/journey/minneriya.jpg",
+    "thumb": "assets/journey/thumbs/minneriya.jpg",
+    "width": 1200,
+    "height": 797
+  },
+  "wilpattu": {
+    "main": "assets/journey/wilpattu.jpg",
+    "thumb": "assets/journey/thumbs/wilpattu.jpg",
+    "width": 1200,
+    "height": 674
+  },
+  "casuarina-beach": {
+    "main": "assets/journey/casuarina-beach.jpg",
+    "thumb": "assets/journey/thumbs/casuarina-beach.jpg",
+    "width": 892,
+    "height": 1200
+  },
+  "nainativu": {
+    "main": "assets/journey/nainativu.jpg",
+    "thumb": "assets/journey/thumbs/nainativu.jpg",
+    "width": 864,
+    "height": 578
+  },
+  "delft-island": {
+    "main": "assets/journey/delft-island.jpg",
+    "thumb": "assets/journey/thumbs/delft-island.jpg",
+    "width": 892,
+    "height": 1200
+  },
+  "mannar": {
+    "main": "assets/journey/mannar.jpg",
+    "thumb": "assets/journey/thumbs/mannar.jpg",
+    "width": 892,
+    "height": 1200
+  },
+  "cover": {
+    "main": "assets/journey/cover.jpg",
+    "thumb": "assets/journey/thumbs/cover.jpg",
+    "width": 1200,
+    "height": 800
+  }
+}

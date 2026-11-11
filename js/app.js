@@ -315,10 +315,11 @@
 
     const btnDownloadPdfFile = document.getElementById('btn-download-pdf-file');
     if (btnDownloadPdfFile) {
-      btnDownloadPdfFile.addEventListener('click', () => {
-        syncLiveItineraryToStorage();
-        const verName = (state.activePdfVersion === 'classic') ? 'Classic Tabular' : 'Modern Luxury';
-        showToast(`📥 Downloading Sunbird Lanka Tours Itinerary (${verName})...`);
+      btnDownloadPdfFile.addEventListener('click', (e) => {
+        // Build the PDF from the live itinerary instead of following the link
+        // to the old static sample PDF in the repository.
+        e.preventDefault();
+        downloadLiveItineraryPdf();
       });
     }
 
@@ -355,6 +356,14 @@
       btnPdfVerModern.addEventListener('click', () => {
         switchPdfVersion('modern');
         showToast('Switched to Modern Luxury Experience Itinerary');
+      });
+    }
+
+    const btnPdfVerJourney = document.getElementById('btn-pdf-ver-journey');
+    if (btnPdfVerJourney) {
+      btnPdfVerJourney.addEventListener('click', () => {
+        switchPdfVersion('journey');
+        showToast('Switched to Interactive Mobile-Game Journey Experience');
       });
     }
   }
@@ -906,6 +915,7 @@
    * Synchronizes the latest live itinerary payload into localStorage for the PDF generator
    */
   function syncLiveItineraryToStorage() {
+    scheduleEditorAutosave();
     try {
       const payload = buildLiveItineraryPayload();
       localStorage.setItem('sunbird_live_itinerary', JSON.stringify(payload));
@@ -929,30 +939,44 @@
     state.activePdfVersion = version;
     const btnClassic = document.getElementById('btn-pdf-ver-classic');
     const btnModern = document.getElementById('btn-pdf-ver-modern');
+    const btnJourney = document.getElementById('btn-pdf-ver-journey');
     const badge = document.getElementById('pdf-version-indicator');
     const iframe = document.getElementById('pdf-preview-iframe');
     const downloadBtn = document.getElementById('btn-download-pdf-file');
 
-    const isModern = (version === 'modern');
     if (btnClassic) {
-      btnClassic.classList.toggle('active', !isModern);
-      btnClassic.setAttribute('aria-selected', !isModern ? 'true' : 'false');
+      btnClassic.classList.toggle('active', version === 'classic');
+      btnClassic.setAttribute('aria-selected', version === 'classic' ? 'true' : 'false');
     }
     if (btnModern) {
-      btnModern.classList.toggle('active', isModern);
-      btnModern.setAttribute('aria-selected', isModern ? 'true' : 'false');
+      btnModern.classList.toggle('active', version === 'modern');
+      btnModern.setAttribute('aria-selected', version === 'modern' ? 'true' : 'false');
     }
+    if (btnJourney) {
+      btnJourney.classList.toggle('active', version === 'journey');
+      btnJourney.setAttribute('aria-selected', version === 'journey' ? 'true' : 'false');
+    }
+
     if (badge) {
-      badge.textContent = isModern ? '✨ Modern Luxury Edition' : '📊 Classic Table Quotation';
+      if (version === 'journey') {
+        badge.textContent = '🎮 Interactive Journey Game';
+      } else if (version === 'modern') {
+        badge.textContent = '✨ Modern Luxury Edition';
+      } else {
+        badge.textContent = '📊 Classic Table Quotation';
+      }
     }
 
-    const templateFile = isModern ? 'itinerary_modern.html' : 'itinerary_classic.html';
-    const pdfFile = isModern ? 'SunBird_Lanka_Tours_Itinerary_Modern.pdf' : 'SunBird_Lanka_Tours_Itinerary_Classic.pdf';
+    let templateFile = 'itinerary_modern.html';
+    if (version === 'journey') templateFile = 'journey.html';
+    else if (version === 'classic') templateFile = 'itinerary_classic.html';
 
+    // The Download button now builds the PDF from live data (see downloadLiveItineraryPdf),
+    // so it no longer points at the static sample PDFs in the repository.
     if (downloadBtn) {
-      downloadBtn.href = pdfFile;
-      downloadBtn.download = pdfFile;
-      downloadBtn.title = isModern ? 'Download Modern Luxury Itinerary PDF' : 'Download Classic Tabular Itinerary PDF';
+      downloadBtn.setAttribute('href', '#');
+      downloadBtn.removeAttribute('download');
+      downloadBtn.title = (version === 'classic') ? 'Download Classic Tabular Itinerary PDF' : 'Download Modern Luxury Itinerary PDF';
     }
 
     if (triggerSync) {
@@ -966,6 +990,10 @@
       } else if (iframe.contentWindow && typeof iframe.contentWindow.renderItinerary === 'function') {
         try {
           iframe.contentWindow.renderItinerary();
+        } catch(e) {}
+      } else if (iframe.contentWindow && typeof iframe.contentWindow.SunBirdJourney === 'object') {
+        try {
+          iframe.contentWindow.SunBirdJourney.init();
         } catch(e) {}
       }
     }
@@ -982,6 +1010,79 @@
     const templateFile = isModern ? 'itinerary_modern.html' : 'itinerary_classic.html';
     showToast(`Exporting ${isModern ? 'Modern Luxury' : 'Classic'} Itinerary: ${payload.days} Days / ${payload.nights} Nights...`);
     window.open(templateFile, '_blank');
+  }
+
+  /**
+   * Downloads the itinerary as a real PDF built from the live data.
+   * Uses the on-screen PDF preview when it shows the chosen template (so manual text
+   * edits made in the preview are kept); otherwise renders the template off-screen.
+   * Journey mode has no paged layout, so it downloads the Modern Luxury edition.
+   */
+  let pdfDownloadInProgress = false;
+  async function downloadLiveItineraryPdf() {
+    if (pdfDownloadInProgress) return;
+    pdfDownloadInProgress = true;
+    syncLiveItineraryToStorage();
+
+    const useClassic = (state.activePdfVersion === 'classic');
+    const templateFile = useClassic ? 'itinerary_classic.html' : 'itinerary_modern.html';
+    const datePart = state.arrivalDate ? ` - ${state.arrivalDate}` : '';
+    const fileName = `${state.title || 'SunBird Itinerary'}${datePart} (${useClassic ? 'Classic' : 'Modern'})`;
+    showToast('📥 Preparing your PDF from the live itinerary…');
+
+    let frame = document.getElementById('pdf-preview-iframe');
+    let tempFrame = null;
+    const previewUsable = !!(frame && frame.contentWindow && frame.offsetParent !== null &&
+      (frame.getAttribute('src') || '').includes(templateFile));
+
+    try {
+      if (!previewUsable) {
+        tempFrame = await createOffscreenTemplateFrame(templateFile);
+        frame = tempFrame;
+      }
+      const win = frame.contentWindow;
+      await waitForCondition(() => win.SunBirdPdfExport && win.html2pdf && win.document.querySelector('.pdf-page'), 15000);
+      await win.SunBirdPdfExport.download(fileName);
+      showToast('✅ PDF downloaded');
+    } catch (err) {
+      console.error('Live PDF download failed, falling back to print dialog:', err);
+      showToast('Could not build the PDF here – opening Print, choose "Save as PDF"');
+      try {
+        if (frame && frame.contentWindow) frame.contentWindow.print();
+        else window.open(templateFile, '_blank');
+      } catch (e) {
+        window.open(templateFile, '_blank');
+      }
+    } finally {
+      if (tempFrame) tempFrame.remove();
+      pdfDownloadInProgress = false;
+    }
+  }
+
+  function createOffscreenTemplateFrame(templateFile) {
+    return new Promise((resolve, reject) => {
+      const f = document.createElement('iframe');
+      f.setAttribute('aria-hidden', 'true');
+      f.tabIndex = -1;
+      f.style.cssText = 'position:fixed;left:-12000px;top:0;width:1000px;height:1400px;border:0;opacity:0;pointer-events:none;';
+      const timer = setTimeout(() => reject(new Error('Template took too long to load')), 20000);
+      f.onload = () => { clearTimeout(timer); resolve(f); };
+      f.src = templateFile;
+      document.body.appendChild(f);
+    });
+  }
+
+  function waitForCondition(check, timeoutMs) {
+    return new Promise((resolve, reject) => {
+      const start = Date.now();
+      (function poll() {
+        let ok = false;
+        try { ok = !!check(); } catch (e) {}
+        if (ok) return resolve();
+        if (Date.now() - start > timeoutMs) return reject(new Error('Timed out waiting for PDF template'));
+        setTimeout(poll, 150);
+      })();
+    });
   }
 
   /**
@@ -2332,6 +2433,7 @@
   }
 
   function updateUI() {
+    scheduleEditorAutosave();
     daysInput.value = state.days;
     nightsInput.value = state.nights;
     if (arrivalDateInput) arrivalDateInput.value = state.arrivalDate;
@@ -7174,6 +7276,7 @@
 
     setupHubEventListeners();
     renderHub();
+    startCollaboration();
   }
 
   function loadItinerariesFromStorage() {
@@ -7214,6 +7317,8 @@
     } catch (e) {
       console.error('Failed to save itineraries to localStorage', e);
     }
+    // Share the change with teammates (only changed fields are sent)
+    if (window.SunBirdCollab) window.SunBirdCollab.scheduleSync();
   }
 
   function switchScreen(screenName) {
@@ -7233,6 +7338,7 @@
     } else {
       if (screenEditor) screenEditor.style.display = 'none';
       if (screenHub) screenHub.style.display = 'flex';
+      if (window.SunBirdCollab) window.SunBirdCollab.setLocation('');
       renderHub();
     }
   }
@@ -7246,6 +7352,20 @@
       localStorage.setItem(ACTIVE_ITIN_KEY, itin.id);
     } catch (e) {}
 
+    loadItineraryIntoState(itin, false);
+    refreshEditorAfterLoad();
+
+    // Switch screen to editor
+    switchScreen('editor');
+    if (window.SunBirdCollab) window.SunBirdCollab.setLocation(itin.id);
+    showToast(`Loaded ${itin.title}`);
+  }
+
+  /**
+   * Copies an itinerary's data into the editor state. With preserveSelection the
+   * selected day / panel is kept (used for live updates from teammates).
+   */
+  function loadItineraryIntoState(itin, preserveSelection) {
     // Synchronize to app's active state
     state.days = itin.days || 1;
     state.nights = Math.max(0, state.days - 1);
@@ -7294,12 +7414,19 @@
     state.nightMealPlans = itin.nightMealPlans ? JSON.parse(JSON.stringify(itin.nightMealPlans)) : {};
     state.hotelRoomCounts = itin.hotelRoomCounts ? JSON.parse(JSON.stringify(itin.hotelRoomCounts)) : {};
     state.hotelRoomTypes = itin.hotelRoomTypes ? JSON.parse(JSON.stringify(itin.hotelRoomTypes)) : {};
-    state.expandedAttractionDays = { 0: true };
     state.expandedAttractionItems = itin.expandedAttractionItems || {};
 
-    state.selectedPiece = { type: 'day', index: 1 };
-    state.selectedDayIndex = 0;
-    state.selectedDestSlot = 0;
+    if (!preserveSelection) {
+      state.expandedAttractionDays = { 0: true };
+      state.selectedPiece = { type: 'day', index: 1 };
+      state.selectedDayIndex = 0;
+      state.selectedDestSlot = 0;
+    } else if (state.selectedDayIndex >= state.days) {
+      // A teammate shortened the tour: keep the selection inside the new day range
+      state.selectedDayIndex = Math.max(0, state.days - 1);
+      state.selectedPiece = { type: 'day', index: state.selectedDayIndex + 1 };
+      state.selectedDestSlot = 0;
+    }
 
     // Update Form Inputs
     if (daysInput) daysInput.value = state.days;
@@ -7313,7 +7440,10 @@
     if (editorActiveTitleEl) {
       editorActiveTitleEl.textContent = state.title;
     }
+  }
 
+  /** Re-renders every editor panel from the current state. */
+  function refreshEditorAfterLoad() {
     // Refresh UI
     updateUI();
     renderRoomList();
@@ -7334,10 +7464,6 @@
       window.vehicleShowcase.selectVehicle(state.selectedVehicle, true);
     }
     syncLiveItineraryToStorage();
-
-    // Switch screen to editor
-    switchScreen('editor');
-    showToast(`Loaded ${itin.title}`);
   }
 
   function saveCurrentItineraryToStorage() {
@@ -7803,6 +7929,248 @@
 
       hubCardsGrid.appendChild(card);
     });
+    updateCardEditorBadges();
+  }
+
+  // ===========================================================================
+  // REAL-TIME TEAM COLLABORATION (Firebase shared workspace, see js/collab-service.js)
+  // ===========================================================================
+  let collabOthers = [];
+  let collabLastToastAt = 0;
+
+  function startCollaboration() {
+    if (!window.SunBirdCollab) return;
+    renderCollabStatus('connecting');
+    document.addEventListener('click', (e) => {
+      if (!e.target || !e.target.closest) return;
+      if (e.target.closest('.collab-avatar-me')) promptCollabRename();
+      if (e.target.closest('.collab-invite-btn')) copyCollabInviteLink();
+    });
+    window.SunBirdCollab.start({
+      onJoinedTeam: () => showToast('🤝 You joined your team\'s shared itineraries'),
+      getItineraries: () => hubItineraries,
+      onInitialMerge: (list) => {
+        hubItineraries = list;
+        persistItinerariesLocally();
+        const editorOpen = isEditorVisible();
+        const active = hubItineraries.find(i => i.id === hubActiveItinId);
+        if (editorOpen && active) {
+          applyRemoteItineraryToEditor(active);
+        } else if (!editorOpen) {
+          renderHub();
+        }
+      },
+      onRemoteUpsert: (itin, meta, changedFields, isNew) => applyRemoteItinerary(itin, meta, changedFields, isNew),
+      onRemoteRemove: (id, info) => applyRemoteRemoval(id, info),
+      onPresence: (others) => {
+        collabOthers = others || [];
+        renderCollabPresence();
+      },
+      onStatus: (status) => renderCollabStatus(status)
+    });
+  }
+
+  function isEditorVisible() {
+    return !!(screenEditor && screenEditor.style.display !== 'none');
+  }
+
+  /**
+   * Many editor actions (e.g. changing the number of days) only update the on-screen
+   * state. With team sync on, save the open itinerary shortly after every change so
+   * teammates see it live and nothing is lost when their changes arrive.
+   */
+  let editorAutosaveTimer = null;
+  function scheduleEditorAutosave() {
+    if (!window.SunBirdCollab || !isEditorVisible() || !hubActiveItinId) return;
+    clearTimeout(editorAutosaveTimer);
+    editorAutosaveTimer = setTimeout(() => {
+      editorAutosaveTimer = null;
+      if (isEditorVisible() && hubActiveItinId) saveCurrentItineraryToStorage();
+    }, 400);
+  }
+
+  /** Writes itineraries to this browser only (no re-upload to the team workspace). */
+  function persistItinerariesLocally() {
+    try {
+      localStorage.setItem(ITIN_STORAGE_KEY, JSON.stringify(hubItineraries));
+    } catch (e) {
+      console.error('Failed to save itineraries to localStorage', e);
+    }
+  }
+
+  function applyRemoteItinerary(itin, meta, changedFields, isNew) {
+    const editingThis = isEditorVisible() && itin.id === hubActiveItinId;
+    if (editingThis) {
+      // Keep my own not-yet-saved edits: save the editor first, then lay only the
+      // teammate's changed fields on top (they win for those fields, mine for the rest).
+      clearTimeout(editorAutosaveTimer);
+      editorAutosaveTimer = null;
+      saveCurrentItineraryToStorage();
+      const mine = hubItineraries.find(i => i.id === itin.id);
+      if (mine) {
+        (changedFields || []).forEach((f) => {
+          if (Object.prototype.hasOwnProperty.call(itin, f)) mine[f] = JSON.parse(JSON.stringify(itin[f]));
+          else delete mine[f];
+        });
+        if (itin.updatedAt) mine.updatedAt = itin.updatedAt;
+        itin = mine;
+      }
+    }
+
+    const idx = hubItineraries.findIndex(i => i.id === itin.id);
+    if (idx === -1) hubItineraries.unshift(itin);
+    else hubItineraries[idx] = itin;
+    persistItinerariesLocally();
+    // Push any of my own edits that were captured above
+    if (editingThis && window.SunBirdCollab) window.SunBirdCollab.scheduleSync();
+
+    if (isEditorVisible()) {
+      if (itin.id === hubActiveItinId) {
+        applyRemoteItineraryToEditor(itin);
+        const who = (meta && meta.updatedByName) || 'A teammate';
+        const now = Date.now();
+        if (now - collabLastToastAt > 4000) {
+          collabLastToastAt = now;
+          showToast(`✏️ ${who} updated this itinerary`);
+        }
+      }
+    } else {
+      renderHub();
+      if (isNew) showToast(`➕ ${(meta && meta.updatedByName) || 'A teammate'} added "${itin.title || 'an itinerary'}"`);
+    }
+  }
+
+  /** Reloads the open itinerary from a teammate's change, keeping the selected day. */
+  function applyRemoteItineraryToEditor(itin) {
+    loadItineraryIntoState(itin, true);
+    refreshEditorAfterLoad();
+    if (window.mapState && window.mapState.updateRoute) {
+      try { window.mapState.updateRoute(state.dayDestinations.slice(0, state.days)); } catch (e) {}
+    }
+    if (state.activeMainView === 'itinerary' && typeof renderItineraryDetailsView === 'function') {
+      try { renderItineraryDetailsView(); } catch (e) {}
+    }
+    if (state.activeMainView === 'pdf') {
+      const iframe = document.getElementById('pdf-preview-iframe');
+      try {
+        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.renderItinerary === 'function') {
+          iframe.contentWindow.renderItinerary();
+        }
+      } catch (e) {}
+    }
+    renderCollabPresence();
+  }
+
+  function applyRemoteRemoval(id, info) {
+    const idx = hubItineraries.findIndex(i => i.id === id);
+    if (idx === -1) return;
+    const removed = hubItineraries.splice(idx, 1)[0];
+    persistItinerariesLocally();
+    const who = (info && info.byName) || 'A teammate';
+    if (isEditorVisible() && id === hubActiveItinId) {
+      hubActiveItinId = hubItineraries.length > 0 ? hubItineraries[0].id : null;
+      switchScreen('hub');
+      showToast(`🗑️ ${who} deleted "${removed.title}"`);
+    } else if (!isEditorVisible()) {
+      renderHub();
+      showToast(`🗑️ ${who} deleted "${removed.title}"`);
+    }
+  }
+
+  function collabAvatarHtml(person, extraClass) {
+    const name = person.name || 'Guest';
+    const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+    return `<span class="collab-avatar ${extraClass || ''}" style="background:${escapeHtml(person.color || '#64748b')}" title="${escapeHtml(name)}">${escapeHtml(initials)}</span>`;
+  }
+
+  function renderCollabPresence() {
+    const me = window.SunBirdCollab ? window.SunBirdCollab.getMe() : null;
+    const hubAvatars = document.getElementById('collab-hub-avatars');
+    const editorAvatars = document.getElementById('collab-editor-avatars');
+
+    if (hubAvatars) {
+      const online = collabOthers.slice(0, 6).map(p => collabAvatarHtml(p)).join('');
+      const more = collabOthers.length > 6 ? `<span class="collab-avatar collab-avatar-more">+${collabOthers.length - 6}</span>` : '';
+      hubAvatars.innerHTML = (me ? collabAvatarHtml(me, 'collab-avatar-me') : '') + online + more;
+      hubAvatars.title = collabOthers.length
+        ? `Online now: ${collabOthers.map(p => p.name).join(', ')}`
+        : 'No teammates online right now';
+    }
+
+    if (editorAvatars) {
+      const here = collabOthers.filter(p => p.itinId && p.itinId === hubActiveItinId);
+      editorAvatars.innerHTML = (me ? collabAvatarHtml(me, 'collab-avatar-me') : '') + here.map(p => collabAvatarHtml(p)).join('');
+      editorAvatars.title = here.length
+        ? `Also editing: ${here.map(p => p.name).join(', ')}`
+        : 'Only you are editing this itinerary';
+    }
+
+    updateCardEditorBadges();
+  }
+
+  function updateCardEditorBadges() {
+    if (!hubCardsGrid) return;
+    hubCardsGrid.querySelectorAll('.itin-card[data-id]').forEach(card => {
+      const id = card.getAttribute('data-id');
+      const editors = collabOthers.filter(p => p.itinId === id);
+      let badge = card.querySelector('.collab-card-editors');
+      if (editors.length === 0) {
+        if (badge) badge.remove();
+        return;
+      }
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'collab-card-editors';
+        const badges = card.querySelector('.itin-card-badges');
+        (badges || card).appendChild(badge);
+      }
+      const names = editors.map(p => p.name);
+      badge.innerHTML = editors.slice(0, 3).map(p => collabAvatarHtml(p)).join('') +
+        `<span class="collab-card-editors-text">${escapeHtml(names.length === 1 ? names[0] + ' is editing' : names.length + ' editing')}</span>`;
+      badge.title = `Editing now: ${names.join(', ')}`;
+    });
+  }
+
+  function renderCollabStatus(status) {
+    const labels = {
+      connecting: 'Connecting…',
+      live: 'Live – team sync on',
+      offline: 'Offline – changes will sync when back online',
+      denied: 'Sync blocked by Firebase rules',
+      unavailable: 'Team sync unavailable',
+      error: 'Sync error – retrying on next change'
+    };
+    document.querySelectorAll('.collab-status').forEach(el => {
+      el.setAttribute('data-status', status);
+      const label = el.querySelector('.collab-status-label');
+      if (label) label.textContent = (status === 'live') ? 'Live' : (labels[status] || status);
+      el.title = labels[status] || status;
+    });
+  }
+
+  function copyCollabInviteLink() {
+    const link = window.SunBirdCollab && window.SunBirdCollab.getInviteLink();
+    if (!link) {
+      showToast('Team sync is not connected yet');
+      return;
+    }
+    const done = () => showToast('🔗 Invite link copied – send it to the teammates you want to edit with');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(done).catch(() => window.prompt('Copy this invite link and send it to your teammate:', link));
+    } else {
+      window.prompt('Copy this invite link and send it to your teammate:', link);
+    }
+  }
+
+  function promptCollabRename() {
+    if (!window.SunBirdCollab) return;
+    const me = window.SunBirdCollab.getMe();
+    const name = window.prompt('Your name (shown to teammates editing with you):', me ? me.name : '');
+    if (name && name.trim()) {
+      window.SunBirdCollab.rename(name.trim());
+      renderCollabPresence();
+      showToast(`You appear to teammates as "${name.trim()}"`);
+    }
   }
 
   function openCreateModal() {
@@ -8009,7 +8377,8 @@
           days: daysCount,
           nights: itinData.nights !== undefined ? itinData.nights : Math.max(0, daysCount - 1),
           routeMode: itinData.routeMode,
-          templateVersion: state.activePdfVersion
+          templateVersion: state.activePdfVersion,
+          rows: itinData.rows || []
         }
       });
 

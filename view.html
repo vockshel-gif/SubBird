@@ -545,6 +545,57 @@
         box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
       }
     }
+
+    /* ── Mode Switcher in Sticky Header ── */
+    .header-mode-switcher {
+      display: inline-flex;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1.5px solid rgba(56, 189, 248, 0.35);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+      margin: 0 4px;
+      flex-shrink: 0;
+    }
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #94a3b8;
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .mode-pill.active {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.45);
+    }
+    .journey-frame-container {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .journey-frame {
+      width: 100%;
+      height: calc(100vh - 58px);
+      border: none;
+      display: block;
+      background: #fbf5ea;
+    }
+    .view-hidden {
+      display: none !important;
+    }
+
   </style>
 </head>
 <body>
@@ -560,6 +611,18 @@
         </h1>
         <div class="brand-sub">Sri Lanka Travel Expeditions &amp; Luxury Transport</div>
       </div>
+    </div>
+
+    <!-- Dual Mode Switcher (Interactive Journey vs Official PDF) -->
+    <div class="header-mode-switcher" id="header-mode-switcher">
+      <button type="button" class="mode-pill active" id="btn-mode-journey">
+        <span>🎮</span>
+        <span>Interactive Journey</span>
+      </button>
+      <button type="button" class="mode-pill" id="btn-mode-pdf">
+        <span>📄</span>
+        <span>PDF Document</span>
+      </button>
     </div>
 
     <!-- Desktop Top Actions -->
@@ -611,8 +674,13 @@
     </div>
   </div>
 
+  <!-- 2.5 Interactive Journey Viewport -->
+  <div class="journey-frame-container" id="journey-viewport">
+    <iframe id="journey-frame" class="journey-frame" src="journey.html" title="Interactive Journey Quest"></iframe>
+  </div>
+
   <!-- 3. Document Viewport -->
-  <main class="document-viewport">
+  <main class="document-viewport view-hidden" id="pdf-viewport">
 
     <!-- Loading State -->
     <div class="state-screen" id="loading-screen">
@@ -671,6 +739,37 @@
       const urlParams = new URLSearchParams(window.location.search);
       const itineraryId = urlParams.get('id') || urlParams.get('file');
 
+      // Mode switching elements
+      const btnModeJourney = document.getElementById('btn-mode-journey');
+      const btnModePdf = document.getElementById('btn-mode-pdf');
+      const journeyViewport = document.getElementById('journey-viewport');
+      const journeyFrame = document.getElementById('journey-frame');
+      const pdfViewport = document.getElementById('pdf-viewport');
+
+      let activeMode = 'journey'; // default to interactive journey
+
+      function switchPortalMode(mode) {
+        activeMode = mode;
+        const isJourney = (mode === 'journey');
+        btnModeJourney.classList.toggle('active', isJourney);
+        btnModePdf.classList.toggle('active', !isJourney);
+
+        if (isJourney) {
+          journeyViewport.classList.remove('view-hidden');
+          pdfViewport.classList.add('view-hidden');
+          if (subToolbar) subToolbar.style.display = 'none';
+          if (mobileBottomBar) mobileBottomBar.style.display = 'none';
+        } else {
+          journeyViewport.classList.add('view-hidden');
+          pdfViewport.classList.remove('view-hidden');
+          if (subToolbar) subToolbar.style.display = 'flex';
+          if (mobileBottomBar && window.innerWidth <= 768) mobileBottomBar.style.display = 'flex';
+        }
+      }
+
+      if (btnModeJourney) btnModeJourney.addEventListener('click', () => switchPortalMode('journey'));
+      if (btnModePdf) btnModePdf.addEventListener('click', () => switchPortalMode('pdf'));
+
       const loadingScreen = document.getElementById('loading-screen');
       const notFoundCard = document.getElementById('not-found-card');
       const notFoundDesc = document.getElementById('not-found-desc');
@@ -721,6 +820,9 @@
         }
 
         try {
+          if (journeyFrame && itineraryId) {
+            journeyFrame.src = 'journey.html?id=' + encodeURIComponent(itineraryId);
+          }
           if (!window.SunBirdFirebase) {
             throw new Error('Firebase service unavailable.');
           }

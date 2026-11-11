@@ -793,7 +793,161 @@
       background: rgba(37, 99, 235, 0.12);
       box-shadow: 0 0 0 1px #2563eb;
     }
+
+    /* ── Expedition Poster Map Page (Kerala Poster Style) ── */
+    .poster-hero-head {
+      text-align: center;
+      margin-bottom: 2mm;
+    }
+    .poster-country-title {
+      font-size: 24pt;
+      font-weight: 900;
+      color: #064e3b;
+      letter-spacing: 2px;
+      line-height: 1;
+      margin: 0;
+      text-transform: uppercase;
+    }
+    .poster-sub-title {
+      font-size: 7.5pt;
+      font-weight: 800;
+      letter-spacing: 2.2px;
+      color: #0284c7;
+      text-transform: uppercase;
+      margin-top: 1mm;
+    }
+    .poster-body-grid {
+      display: grid;
+      grid-template-columns: 46% 54%;
+      gap: 3mm;
+      flex: 1 1 auto;
+      align-items: center;
+      overflow: hidden;
+    }
+    .poster-map-col {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 45% 45%, #e0f4fc 0%, #b8e6f7 100%);
+      border-radius: 8px;
+      border: 1px solid #bae6fd;
+      padding: 2mm;
+      position: relative;
+    }
+    .poster-map-svg {
+      width: 100%;
+      height: auto;
+      max-height: 198mm;
+    }
+    .poster-list-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2mm;
+      height: 100%;
+      justify-content: space-evenly;
+      padding-left: 1mm;
+    }
+    .poster-stop-card {
+      display: flex;
+      align-items: center;
+      gap: 2.5mm;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.6mm 2.2mm;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .poster-stop-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: #ffffff;
+      font-size: 8pt;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 5px rgba(234, 88, 12, 0.4);
+    }
+    .poster-stop-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .poster-stop-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .poster-stop-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      margin-bottom: 1px;
+    }
+    .poster-stop-name {
+      font-size: 8.5pt;
+      font-weight: 800;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .poster-stay-pill {
+      background: #ffedd5;
+      color: #c2410c;
+      font-size: 6.2pt;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 999px;
+      border: 1px solid #fed7aa;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .poster-stop-desc {
+      font-size: 6.8pt;
+      color: #64748b;
+      line-height: 1.25;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .poster-cta-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(90deg, #0284c7, #0369a1);
+      color: #ffffff;
+      padding: 1.6mm 3.5mm;
+      border-radius: 5px;
+      margin-top: 1.5mm;
+      font-size: 7.2pt;
+      font-weight: 700;
+    }
+    .day-thumb-mini {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+
   </style>
+  <!-- Live PDF export (Download PDF button) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+  <script src="js/pdf-export.js" defer></script>
 </head>
 <body>
 
@@ -1021,7 +1175,178 @@
       `;
     }
 
+
+    const SRI_LANKA_MAP_PATH = "M356.3 432.5L358.2 440.4L357.6 449.7L350.5 474.1L349.4 482.7L345.9 491.5L341.5 498.3L342.5 502.1L340.8 506.5L326.4 529.3L321.6 534.1L312.7 540.4L305.8 543.3L277.3 565.6L271.6 568.7L253.1 575.3L252.8 572.9L250.5 572.4L248.8 577.2L239.0 581.8L206.8 589.4L202.9 590.9L200.6 594.1L196.4 593.3L192.4 594.9L180.6 603.6L177.8 606.7L168.9 606.7L158.9 612.0L151.0 608.8L139.6 609.4L136.3 604.7L131.4 606.4L126.3 605.7L123.2 603.6L120.5 604.7L118.4 602.5L106.1 598.8L100.5 595.1L99.4 596.2L82.6 579.4L82.4 577.4L73.0 559.3L70.0 544.8L67.1 539.7L64.7 529.9L62.6 527.8L62.8 526.9L64.7 526.7L63.4 518.0L47.1 476.3L44.8 463.5L44.8 452.5L46.9 444.8L39.5 418.9L40.5 415.1L40.5 417.4L44.8 427.8L46.9 425.7L46.9 420.9L45.7 417.2L43.0 416.3L41.4 414.3L42.6 410.9L34.1 354.1L35.2 353.3L36.3 354.1L37.7 345.4L35.7 340.9L35.2 332.5L31.3 313.3L25.4 295.3L21.5 278.0L21.5 273.0L22.6 274.1L23.1 271.2L21.5 259.4L26.4 254.7L29.6 246.4L34.1 239.3L28.9 249.9L30.8 252.5L34.1 253.1L31.1 260.4L29.1 261.4L28.9 267.8L26.3 276.0L26.6 280.6L30.0 284.7L26.9 291.0L31.8 294.6L39.0 295.1L42.6 292.6L40.3 286.9L36.4 281.9L41.6 272.1L39.5 266.7L39.5 260.4L38.1 257.9L41.6 250.4L44.8 225.7L47.5 222.2L48.7 210.4L55.3 204.6L59.2 194.4L60.5 179.4L56.8 169.9L57.4 157.2L55.1 148.9L60.0 147.3L68.9 139.4L75.5 135.4L84.3 109.8L85.9 103.5L86.3 93.3L78.3 88.4L76.2 79.3L81.5 75.7L89.8 73.4L93.1 68.9L98.4 66.7L92.9 59.5L78.5 50.7L76.2 47.9L81.2 48.0L95.1 55.2L104.0 57.4L109.9 62.0L110.8 63.7L109.0 64.6L109.9 66.7L109.0 67.8L112.2 69.9L133.6 62.6L145.6 65.2L155.2 69.5L162.5 70.9L152.1 63.8L145.3 61.5L140.5 58.3L136.3 58.3L134.0 59.9L132.0 58.4L124.7 58.0L113.8 48.6L96.7 39.8L94.8 39.8L95.1 43.6L98.8 47.4L96.7 49.7L85.8 41.8L82.6 40.4L88.9 46.7L85.2 46.0L74.1 40.4L68.3 35.8L61.8 33.0L61.7 34.1L60.0 33.0L58.4 27.7L54.2 21.4L57.6 19.8L63.6 14.3L66.3 13.1L86.9 13.7L88.1 20.1L94.4 21.6L95.8 23.4L100.6 22.6L102.3 23.6L120.1 42.8L136.3 51.0L136.3 49.9L130.7 47.1L117.2 36.1L106.2 23.5L89.4 16.8L89.1 14.4L92.3 13.1L106.0 12.6L108.1 14.1L111.0 21.2L131.1 44.6L140.0 50.2L182.4 84.2L190.8 94.2L188.9 95.1L185.2 92.1L181.2 92.0L190.0 101.0L193.1 102.7L191.2 99.0L191.5 97.7L194.7 97.9L203.6 117.2L197.2 115.5L196.3 117.7L202.2 120.0L202.6 123.5L205.8 121.5L208.9 129.9L211.8 134.3L215.3 136.7L214.6 138.9L213.2 139.4L211.1 136.2L202.6 133.1L209.9 140.6L209.9 143.6L211.7 144.8L208.6 148.1L211.1 150.0L213.7 149.8L218.4 142.5L224.0 149.2L228.9 157.6L236.0 162.2L239.3 170.2L244.8 173.7L248.8 185.7L249.7 183.7L252.0 184.7L251.6 186.1L257.3 193.1L257.3 195.8L253.1 199.3L256.3 198.3L259.6 205.5L260.1 209.2L256.2 209.8L257.0 207.4L256.0 205.4L254.3 205.1L253.1 207.7L255.2 212.8L254.1 215.2L248.8 211.6L246.1 210.9L243.6 212.0L241.6 214.7L242.3 216.1L244.7 215.7L247.9 213.1L254.4 220.5L264.9 221.3L267.3 219.8L265.7 216.2L273.0 214.0L277.9 219.0L281.5 237.2L279.6 235.8L277.5 231.8L275.7 230.9L276.5 237.4L277.3 239.3L283.0 240.9L290.6 273.4L287.8 277.2L283.7 263.6L282.6 263.6L282.6 272.1L288.6 278.7L291.2 278.5L292.1 275.2L293.0 275.2L295.5 283.0L301.5 293.2L303.7 291.0L304.7 295.2L307.8 293.2L308.6 295.1L307.8 299.4L313.2 305.7L311.1 306.7L310.2 310.0L312.0 315.3L315.1 318.9L319.5 318.3L322.1 324.1L330.9 334.3L331.2 337.3L327.8 338.3L320.5 330.8L317.9 329.9L315.9 330.1L314.3 331.7L313.2 335.1L316.8 336.2L319.5 334.0L322.9 335.6L323.7 338.3L331.0 346.7L330.0 348.5L331.0 351.0L332.0 349.9L331.4 347.8L336.8 351.0L340.4 359.4L339.4 363.6L340.4 366.2L338.1 369.0L341.5 374.1L339.8 375.3L340.1 376.5L343.6 375.1L344.7 383.6L345.8 383.6L347.9 376.2L347.5 373.9L348.6 373.8L353.2 383.3L357.0 396.4L356.3 432.5Z";
+
+    function getDestSlug(destName) {
+      if (!destName) return 'sigiriya';
+      const s = String(destName).toLowerCase();
+      if (s.includes('airport') || s.includes('bia') || s.includes('cmb')) return 'airport';
+      if (s.includes('sigiriya')) return 'sigiriya';
+      if (s.includes('dambulla')) return 'dambulla';
+      if (s.includes('kandy')) return 'kandy';
+      if (s.includes('nuwara') || s.includes('eliya')) return 'nuwara-eliya';
+      if (s.includes('ella')) return 'ella';
+      if (s.includes('yala')) return 'yala';
+      if (s.includes('udawalawe')) return 'udawalawe';
+      if (s.includes('mirissa')) return 'mirissa';
+      if (s.includes('galle')) return 'galle';
+      if (s.includes('bentota')) return 'bentota';
+      if (s.includes('colombo')) return 'colombo';
+      if (s.includes('negombo')) return 'negombo';
+      if (s.includes('anuradhapura')) return 'anuradhapura';
+      if (s.includes('polonnaruwa')) return 'polonnaruwa';
+      if (s.includes('trincomalee')) return 'trincomalee';
+      if (s.includes('arugam')) return 'arugam-bay';
+      if (s.includes('jaffna')) return 'jaffna';
+      return 'sigiriya';
+    }
+
+    const MAP_COORDS = {
+      'airport': { x: 50.2, y: 418.8, name: 'Airport (BIA)' },
+      'colombo': { x: 46.8, y: 457.8, name: 'Colombo' },
+      'negombo': { x: 42.9, y: 415.8, name: 'Negombo' },
+      'sigiriya': { x: 184.8, y: 299.6, name: 'Sigiriya' },
+      'dambulla': { x: 168.2, y: 312.4, name: 'Dambulla' },
+      'kandy': { x: 165.4, y: 402.0, name: 'Kandy' },
+      'nuwara-eliya': { x: 184.8, y: 454.4, name: 'Nuwara Eliya' },
+      'ella': { x: 228.8, y: 467.2, name: 'Ella' },
+      'yala': { x: 301.6, y: 543.6, name: 'Yala' },
+      'udawalawe': { x: 204.4, y: 527.4, name: 'Udawalawe' },
+      'mirissa': { x: 138.4, y: 608.2, name: 'Mirissa' },
+      'galle': { x: 101.4, y: 592.0, name: 'Galle' },
+      'bentota': { x: 67.6, y: 534.8, name: 'Bentota' },
+      'anuradhapura': { x: 130.2, y: 245.2, name: 'Anuradhapura' },
+      'polonnaruwa': { x: 221.8, y: 302.2, name: 'Polonnaruwa' },
+      'trincomalee': { x: 257.6, y: 202.8, name: 'Trincomalee' }
+    };
+
+    function renderExpeditionMapPage(data) {
+      const rows = data.rows || [];
+      const stops = [];
+
+      rows.forEach((r, idx) => {
+        const parts = String(r.destination || '').replace(/<[^>]*>/g, '').split(/[-➔&•]/).map(s => s.trim()).filter(Boolean);
+        const lastPart = parts.length > 1 ? parts[parts.length - 1] : parts[0] || 'Sigiriya';
+        const slug = getDestSlug(lastPart);
+        const coord = MAP_COORDS[slug] || { x: 180, y: 360, name: lastPart };
+        const cleanName = lastPart.replace(/\(.*?\)/g, '').trim();
+
+        // Highlights brief
+        let brief = '';
+        if (r.attractions && r.attractions.length > 0) {
+          brief = r.attractions.slice(0, 3).map(a => a.replace(/<[^>]*>/g, '').split(':')[0]).join(', ');
+        } else {
+          brief = 'Scenic leisure, cultural exploration and boutique resort stay.';
+        }
+
+        stops.push({
+          num: idx + 1,
+          slug: slug,
+          name: cleanName,
+          brief: brief,
+          coord: coord,
+          photo: 'assets/journey/thumbs/' + slug + '.jpg',
+          daysText: 'DAY ' + (idx + 1)
+        });
+      });
+
+      // SVG path connecting stops
+      let routePath = '';
+      stops.forEach((s, i) => {
+        if (i === 0) routePath += 'M ' + s.coord.x + ' ' + s.coord.y;
+        else {
+          const prev = stops[i - 1];
+          const mx = (prev.coord.x + s.coord.x) / 2 + (i % 2 === 0 ? 12 : -12);
+          const my = (prev.coord.y + s.coord.y) / 2;
+          routePath += ' Q ' + mx + ' ' + my + ' ' + s.coord.x + ' ' + s.coord.y;
+        }
+      });
+
+      return `
+        <div class="poster-hero-head">
+          <h1 class="poster-country-title" contenteditable="true">SRI LANKA</h1>
+          <div class="poster-sub-title" contenteditable="true">CUSTOMIZE YOUR ITINERARY NOW &bull; OFFICIAL EXPEDITION MAP</div>
+        </div>
+
+        <div class="poster-body-grid">
+          <!-- Left Column: The Illustrated Map (Kerala poster aesthetic) -->
+          <div class="poster-map-col">
+            <svg class="poster-map-svg" viewBox="0 0 374 624" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <linearGradient id="posterLandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#34d399"/>
+                  <stop offset="35%" stop-color="#10b981"/>
+                  <stop offset="70%" stop-color="#059669"/>
+                  <stop offset="100%" stop-color="#047857"/>
+                </linearGradient>
+                <filter id="posterLandShadow" x="-10%" y="-10%" width="120%" height="120%">
+                  <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#064e3b" flood-opacity="0.35"/>
+                </filter>
+              </defs>
+
+              <!-- Coastline & Ocean decor -->
+              <text x="24" y="585" fill="#0284c7" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="800" opacity="0.6">ARABIAN SEA</text>
+              <text x="210" y="70" fill="#0284c7" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="800" opacity="0.6">BAY OF BENGAL</text>
+
+              <!-- Island Shape -->
+              <path d="${SRI_LANKA_MAP_PATH}" fill="url(#posterLandGrad)" stroke="#ffffff" stroke-width="2.5" filter="url(#posterLandShadow)"/>
+              <path d="${SRI_LANKA_MAP_PATH}" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-dasharray="2 4"/>
+
+              <!-- Decorative wildlife & landmarks on map -->
+              <text x="195" y="275" font-size="18">🏰</text>
+              <text x="175" y="420" font-size="17">☕</text>
+              <text x="280" y="525" font-size="18">🐆</text>
+              <text x="140" y="580" font-size="16">🐋</text>
+              <text x="50" y="445" font-size="16">⛵</text>
+
+              <!-- Winding Route Line -->
+              <path d="${routePath}" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+              <path d="${routePath}" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5"/>
+
+              <!-- Numbered Pins -->
+              ${stops.map(s => `
+                <g transform="translate(${s.coord.x}, ${s.coord.y})">
+                  <circle r="14" fill="#ffffff" stroke="#0f172a" stroke-width="1.8" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"/>
+                  <circle r="11" fill="#ea580c"/>
+                  <text y="3.5" text-anchor="middle" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="900">${s.num}</text>
+                  <text y="24" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="800" style="paint-order: stroke; stroke: #ffffff; stroke-width: 3px;">${s.name}</text>
+                </g>
+              `).join('')}
+            </svg>
+          </div>
+
+          <!-- Right Column: Numbered Route Destination Cards -->
+          <div class="poster-list-col">
+            ${stops.map(s => `
+              <div class="poster-stop-card">
+                <div class="poster-stop-num">${s.num}</div>
+                <img src="${s.photo}" class="poster-stop-thumb" alt="${s.name}" onerror="this.src='assets/journey/thumbs/colombo.jpg'"/>
+                <div class="poster-stop-info">
+                  <div class="poster-stop-header">
+                    <span class="poster-stop-name">${s.name}</span>
+                    <span class="poster-stay-pill">${s.daysText}</span>
+                  </div>
+                  <div class="poster-stop-desc">${s.brief}</div>
+                </div>
+              </div>
+            `).join('')}
+
+            <div class="poster-cta-strip">
+              <span>✦ TAILOR-MADE PRIVATE EXPEDITIONS</span>
+              <span>📞 (+94) 766 800 130</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function renderDayCardHtml(row) {
+      const parts = String(row.destination || '').replace(/<[^>]*>/g, '').split(/[-➔&•]/).map(s => s.trim()).filter(Boolean);
+      const lastPart = parts.length > 1 ? parts[parts.length - 1] : parts[0] || 'Sigiriya';
+      const destSlug = getDestSlug(lastPart);
+      const thumbUrl = 'assets/journey/thumbs/' + destSlug + '.jpg';
+
       const hasSegments = row.segments && row.segments.length > 1;
       let routeHeader = row.destination;
       let totalDist = row.distanceKm;
@@ -1044,6 +1369,7 @@
         <div class="journey-day-card">
           <div class="day-card-header">
             <div class="day-left-meta">
+              <img src="${thumbUrl}" class="day-thumb-mini" alt="Destination" onerror="this.style.display='none'"/>
               <span class="day-pill-badge" contenteditable="true">DAY ${String(row.dayNum).padStart(2, '0')}</span>
               <span class="day-date-text" contenteditable="true">${row.dateStr.replace(/<br>/gi, ' ')}</span>
               <span class="day-route-text" contenteditable="true">📍 ${cleanRoute}</span>
@@ -1216,6 +1542,22 @@
       const guests = data.touristsCount || 2;
       const vehicleDesc = data.vehicleName || ((guests > 6) ? "Luxury Mini Coach" : ((guests > 2) ? "Luxury Van" : "Luxury Car"));
 
+      // Page 1: Expedition Visual Map Poster (Kerala Poster Style)
+      const pPoster = document.createElement('div');
+      pPoster.className = 'pdf-page';
+      pPoster.innerHTML = `
+        <div class="page-inner-border">
+          ${getHeaderHtml()}
+          ${renderExpeditionMapPage(data)}
+          <div class="page-footer">
+            <span>Sunbird Lanka Tours &amp; Travels (Pvt) Ltd &bull; www.sunbirdtours.lk</span>
+            <span class="page-num-placeholder">Page 1 of Y</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(pPoster);
+      const pages = [pPoster];
+
       function createPage(isFirstPage) {
         const page = document.createElement('div');
         page.className = 'pdf-page';
@@ -1267,7 +1609,7 @@
       let curCardsContainer = curPage.querySelector('.journey-cards-container');
       let curInner = curPage.querySelector('.page-inner-border');
       let curFooter = curPage.querySelector('.page-footer');
-      const pages = [curPage];
+      pages.push(curPage);
 
       data.rows.forEach(r => {
         const cardHtml = renderDayCardHtml(r);
@@ -1328,14 +1670,14 @@
   </script>
 
   <div class="floating-pdf-actions no-print-btn" id="template-floating-actions">
-    <a href="SunBird_Lanka_Tours_Itinerary_Modern.pdf" download="SunBird_Lanka_Tours_Itinerary_Modern.pdf" class="fab-btn fab-download" title="Download Modern Itinerary PDF">
+    <button type="button" class="fab-btn fab-download" title="Download this itinerary as a PDF" onclick="if (window.SunBirdPdfExport) { SunBirdPdfExport.download().catch(function () { window.print(); }); } else { window.print(); }">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
         <polyline points="7 10 12 15 17 10"></polyline>
         <line x1="12" y1="15" x2="12" y2="3"></line>
       </svg>
       <span>Download PDF</span>
-    </a>
+    </button>
     <button type="button" class="fab-btn fab-print" onclick="window.print()" title="Print / Save as PDF">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 6 2 18 2 18 9"></polyline>

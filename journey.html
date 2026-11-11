@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>SunBird Lanka Tours — Interactive Island Expedition</title>
+  <link rel="icon" type="image/png" href="Logo/Logo1.png">
+
+  <!-- Google Fonts: Bricolage Grotesque (Bold playful titles), Plus Jakarta Sans (Clean UI), Caveat (Cozy handwritten notes) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Caveat:wght@700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Journey Styling -->
+  <link rel="stylesheet" href="css/journey.css">
+
+  <!-- Firebase Integration for Live Cloud Links -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script src="js/firebase-service.js"></script>
+  <script src="js/journey-destinations.js"></script>
+</head>
+<body class="locked">
+
+  <!-- Paper grain overlay for tactile travel poster aesthetic -->
+  <div class="grain"></div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas" class="confetti"></canvas>
+
+  <!-- Interactive Toast Notification -->
+  <div id="journey-toast" class="toast">Expedition initialized!</div>
+
+  <!-- 1. Game Loader -->
+  <div id="journey-loader" class="loader">
+    <div class="loader-inner">
+      <div class="loader-orbit">
+        <div class="loader-island"></div>
+        <div class="loader-plane"><span>✈️</span></div>
+      </div>
+      <div class="loader-title">SUNBIRD LANKA TOURS</div>
+      <div class="loader-sub">Preparing your island quest...</div>
+    </div>
+  </div>
+
+  <!-- 2. Boarding Pass Intro (Game-like Unlock Screen) -->
+  <div id="intro-screen" class="intro">
+    <div class="intro-sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+    <div class="intro-plane">✈️</div>
+
+    <div class="intro-greeting">
+      <div class="hello">Ayubowan! You are invited to</div>
+      <h1>CEYLON ISLAND EXPEDITION</h1>
+    </div>
+
+    <!-- Interactive Boarding Pass Card -->
+    <div class="ticket" id="boarding-ticket">
+      <div class="ticket-main">
+        <div class="tk-head">
+          <div class="tk-brand">
+            <img src="Logo/Logo1.png" alt="SunBird Logo" onerror="this.style.display='none'">
+            <span>SUNBIRD EXPEDITIONS</span>
+          </div>
+          <span class="tk-class">VIP PRIVATE PASS</span>
+        </div>
+
+        <div class="tk-route">
+          <div class="tk-from">
+            <div class="tk-code">CMB</div>
+            <div class="tk-city">Colombo</div>
+          </div>
+          <div class="tk-path">
+            <svg viewBox="0 0 84 30">
+              <path d="M 4 22 Q 42 -6 80 22" fill="none" stroke="#2baae2" stroke-width="2.2" stroke-dasharray="3 4"/>
+            </svg>
+            <div class="mini-plane">✈️</div>
+          </div>
+          <div class="tk-to">
+            <div class="tk-code">LKA</div>
+            <div class="tk-city">Sri Lanka</div>
+          </div>
+        </div>
+
+        <div class="tk-title" id="tk-title">CEYLON LUXURY DISCOVERY &amp; HERITAGE EXPEDITION</div>
+
+        <div class="tk-grid">
+          <div class="tk-cell">
+            <label>Travel Party</label>
+            <b id="tk-party">2 Adventurers</b>
+          </div>
+          <div class="tk-cell">
+            <label>Duration</label>
+            <b id="tk-days">7 Days / 6 Nights</b>
+          </div>
+          <div class="tk-cell">
+            <label>Dates</label>
+            <b id="tk-dates">26 Aug - 01 Sep</b>
+          </div>
+          <div class="tk-cell" style="grid-column: span 3;">
+            <label>Chauffeur &amp; Transport</label>
+            <b id="tk-veh">Dedicated Luxury Chauffeur Vehicle</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="ticket-perf"></div>
+
+      <div class="ticket-stub">
+        <div class="tk-stub-row">
+          <div class="barcode"></div>
+          <!-- Slide to Board Control -->
+          <div class="slide-board" id="slide-board">
+            <div class="slide-board-fill" id="slide-fill"></div>
+            <div class="slide-board-text">SLIDE TO BOARD ➔</div>
+            <div class="slide-knob" id="slide-knob">✈️</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="intro-skip" id="intro-skip-btn">Skip intro &amp; explore journey ➔</button>
+  </div>
+
+  <!-- 3. Top Sticky HUD (Heads-Up Progress Display) -->
+  <header id="journey-hud" class="hud">
+    <img src="Logo/Logo1.png" alt="SunBird Logo" class="hud-logo" onerror="this.style.display='none'">
+    <div class="hud-mid">
+      <div class="hud-title" id="hud-trip-title">Ceylon Luxury Expedition</div>
+      <div class="hud-track">
+        <div class="hud-track-fill" id="hud-track-fill"></div>
+        <div class="hud-car" id="hud-car">🚗</div>
+      </div>
+    </div>
+    <div class="hud-xp" id="hud-xp-badge">
+      <span>⭐</span>
+      <span id="hud-xp-val">0 XP</span>
+    </div>
+  </header>
+
+  <!-- 4. Main Journey Layout -->
+  <main class="app" id="main-content">
+    <div class="wrap">
+
+      <!-- Hero Banner -->
+      <section class="hero" id="hero-section">
+        <img src="assets/journey/sigiriya.jpg" alt="Sri Lanka Heritage" class="hero-img" onerror="this.src='assets/sri_lanka_satellite.jpg'">
+        <div class="hero-content">
+          <span class="hero-chip">🌴 OFFICIAL TOUR ITINERARY</span>
+          <h1 id="hero-main-title">CEYLON LUXURY DISCOVERY &amp; HERITAGE EXPEDITION</h1>
+          <div class="hero-period" id="hero-period-label">Period: 26th Aug to 01st Sep 2026 • 2 Guests</div>
+        </div>
+      </section>
+
+      <!-- Expedition Quick Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="ico">🗓️</div>
+          <b id="stat-days-val">7</b>
+          <span>Days</span>
+        </div>
+        <div class="stat">
+          <div class="ico">🚗</div>
+          <b id="stat-km-val">705km</b>
+          <span>Distance</span>
+        </div>
+        <div class="stat">
+          <div class="ico">📍</div>
+          <b id="stat-stops-val">7</b>
+          <span>Sanctuaries</span>
+        </div>
+        <div class="stat">
+          <div class="ico">⚔️</div>
+          <b id="stat-quests-val">18</b>
+          <span>Quests</span>
+        </div>
+      </div>
+
+      <!-- Main Dual-Column Content (Left: Sticky Island Map, Right: Day Levels) -->
+      <div class="layout" style="margin-top: 26px;">
+
+        <!-- Left Column: The Island Map (Kerala Poster Style) -->
+        <aside class="map-col" id="map-section">
+          <div class="eyebrow">Visual Route Expedition</div>
+          <h2 class="h2">The Island Route</h2>
+          <p class="hand" style="margin-top: 4px;">Tap any numbered pin to jump to that day!</p>
+
+          <div class="map-card" style="margin-top: 14px;">
+            <svg id="island-map-svg" class="island-map" viewBox="0 0 374 624" preserveAspectRatio="xMidYMid meet">
+              <!-- Rendered dynamically by js/journey.js -->
+            </svg>
+
+            <!-- Map Floating Actions -->
+            <div class="map-toolbar">
+              <button type="button" class="map-btn" onclick="window.driveWholeRoute()">
+                <span>🚗</span>
+                <span>Tour Whole Route</span>
+              </button>
+              <button type="button" class="map-btn light" onclick="window.scrollToDay(1)">
+                <span>Day 01 ➔</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Horizontal Stop Chips Strip -->
+          <div class="stops-strip" id="stops-strip">
+            <!-- Rendered dynamically by js/journey.js -->
+          </div>
+        </aside>
+
+        <!-- Right Column: Day-by-Day "Level" Cards -->
+        <section class="levels-col" id="levels-section">
+          <div class="eyebrow">Day-by-Day Adventures</div>
+          <h2 class="h2">Expedition Levels</h2>
+          <p class="hand" style="margin-top: 4px;">Complete day quests to unlock collector stamps!</p>
+
+          <!-- Day Level Cards Container -->
+          <div class="levels" id="journey-levels">
+            <!-- Rendered dynamically by js/journey.js -->
+          </div>
+
+          <!-- 5. Collector's Digital Passport -->
+          <section class="section" id="passport-section">
+            <div class="eyebrow">Souvenir Collection</div>
+            <h2 class="h2">Digital Passport</h2>
+
+            <div class="passport">
+              <div class="pp-head">
+                <div>
+                  <div class="pp-title">PASSPORT TO CEYLON</div>
+                  <div class="pp-sub">SunBird Destination Management • Official Stamps</div>
+                </div>
+                <div class="pp-emblem">🦁</div>
+              </div>
+
+              <div class="pp-page">
+                <div class="stamps" id="passport-stamps-grid">
+                  <!-- Rendered dynamically by js/journey.js -->
+                </div>
+              </div>
+
+              <div class="pp-foot">
+                <span id="passport-count-label">0 Stamps Collected</span>
+                <b>✦ Certified Tour Memories</b>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. Travel Kit & What's Included -->
+          <section class="section" id="kit-section">
+            <div class="eyebrow">VIP Inclusions &amp; Amenities</div>
+            <h2 class="h2">Your Travel Kit</h2>
+
+            <div class="kit-grid">
+              <!-- Vehicle Card -->
+              <div class="kit-card span2">
+                <h4><span class="kb" style="background:#e6f3fb;color:#2773b7;">🚗</span> Dedicated Private Vehicle</h4>
+                <div class="vehicle-card">
+                  <div class="veh-art">
+                    <svg viewBox="0 0 96 52">
+                      <rect x="8" y="16" width="76" height="26" rx="8" fill="#2773b7"/>
+                      <path d="M 24 16 L 36 6 L 68 6 L 76 16 Z" fill="#38bdf8" opacity="0.85"/>
+                      <circle cx="28" cy="42" r="8" fill="#0f2a3d"/>
+                      <circle cx="28" cy="42" r="3" fill="#ffffff"/>
+                      <circle cx="68" cy="42" r="8" fill="#0f2a3d"/>
+                      <circle cx="68" cy="42" r="3" fill="#ffffff"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <b id="kit-veh-name">Toyota Prius Hybrid / Luxury Van</b>
+                    <p id="kit-veh-desc">Dedicated private A/C vehicle with English-speaking tourist chauffeur guide, all highway expressway tolls, parking and fuel included.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Inclusions -->
+              <div class="kit-card">
+                <h4><span class="kb" style="background:#e2f5ea;color:#12734d;">✔</span> What Is Included</h4>
+                <ul class="kit-list">
+                  <li><b>Handpicked 4★ &amp; 5★ Lodges:</b> Double sharing on Half Board (Dinner &amp; Breakfast).</li>
+                  <li><b>Chauffeur Guide Services:</b> Fuel, highway tolls &amp; driver accommodation included.</li>
+                  <li><b>VIP Airport Hospitality:</b> Meet &amp; greet upon arrival with fresh garland &amp; chilled coconut water.</li>
+                  <li><b>24/7 Concierge Hotline:</b> Dedicated SunBird specialist tracking your trip seamlessly.</li>
+                </ul>
+              </div>
+
+              <!-- Exclusions -->
+              <div class="kit-card">
+                <h4><span class="kb" style="background:#fde8e6;color:#c2372b;">✖</span> What Is Excluded</h4>
+                <ul class="kit-list no">
+                  <li>International flight airfare &amp; Sri Lanka entry visa fee.</li>
+                  <li>Midday lunch meals &amp; alcoholic/specialty beverages.</li>
+                  <li>Sightseeing entrance tickets (paid directly at counters).</li>
+                  <li>Discretionary gratuities and tip appreciation for your chauffeur.</li>
+                </ul>
+              </div>
+
+              <!-- Terms & Policies -->
+              <div class="kit-card span2">
+                <h4><span class="kb" style="background:#fef3c7;color:#b45309;">📋</span> Booking &amp; Confirmation Policies</h4>
+                <div class="terms">
+                  <div class="term">
+                    <label>Advance Deposit</label>
+                    <p><b>50% payment</b> upon itinerary confirmation secures your chauffeur and guaranteed room allocations.</p>
+                  </div>
+                  <div class="term">
+                    <label>Final Settlement</label>
+                    <p>Balance 50% payable prior to guest arrival in Sri Lanka via secure bank wire or electronic remittance.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 7. Finale Celebration Card -->
+          <section class="finale" id="booking-section">
+            <div class="sunset"></div>
+            <div class="trophy">🏆</div>
+            <h2>Ready to Embark on Your Journey?</h2>
+            <p>Your dream Sri Lanka adventure awaits. Contact our dedicated tour consultant now to secure your dates and customize any stop.</p>
+
+            <div class="cta-stack">
+              <a href="https://wa.me/94766800130" target="_blank" class="cta wa" id="cta-whatsapp">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z"/>
+                </svg>
+                <span>Chat on WhatsApp with Consultant</span>
+              </a>
+
+              <div class="cta-row">
+                <a href="tel:+94766800130" class="cta ghost" id="cta-call">
+                  <span>📞 Call Specialist</span>
+                </a>
+                <a href="SunBird_Lanka_Tours_Itinerary_Modern.pdf" download class="cta ghost" id="cta-pdf">
+                  <span>📄 Download PDF</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="consultant">
+              <div class="av">✓</div>
+              <div>Dedicated Ceylon Specialist: <b>Mr. Vikum (+94 766 800 130)</b></div>
+            </div>
+          </section>
+
+          <!-- Footer -->
+          <footer class="foot">
+            <img src="Logo/Logo1.png" alt="SunBird Logo" onerror="this.style.display='none'">
+            <div><strong>SUNBIRD LANKA TOURS &amp; TRAVELS (PVT) LTD</strong></div>
+            <div>403 – Elakanda Road, Hendala, Wattala, Sri Lanka • Official Tourism Operator</div>
+            <div style="margin-top: 4px;">www.sunbirdtours.lk • sunbirdlankatours@gmail.com</div>
+          </footer>
+
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 8. Mobile App-Style Bottom Navigation -->
+  <nav class="bnav" id="journey-bnav">
+    <a href="#map-section" class="active">
+      <span class="ni">🗺️</span>
+      <span>Map</span>
+    </a>
+    <a href="#levels-section">
+      <span class="ni">⚔️</span>
+      <span>Levels</span>
+    </a>
+    <a href="#passport-section">
+      <span class="ni">🦁</span>
+      <span>Passport</span>
+    </a>
+    <a href="#kit-section">
+      <span class="ni">🎒</span>
+      <span>Kit</span>
+    </a>
+    <a href="https://wa.me/94766800130" target="_blank" class="book">
+      <span class="ni">💬</span>
+      <span>Book</span>
+    </a>
+  </nav>
+
+  <!-- Script Execution -->
+  <script src="js/journey.js"></script>
+</body>
+</html>

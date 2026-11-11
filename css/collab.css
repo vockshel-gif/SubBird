@@ -1,0 +1,147 @@
+/* =============================================================================
+   Real-time team collaboration: sync status pill, presence avatars, card badges
+   ============================================================================= */
+
+.collab-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 23, 42, 0.6);
+  color: #cbd5e1;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.collab-status-editor {
+  margin-left: 10px;
+  height: 30px;
+}
+
+.collab-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+.collab-status[data-status="live"] .collab-status-dot {
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+  animation: collab-pulse 2.4s ease-in-out infinite;
+}
+
+.collab-status[data-status="denied"] .collab-status-dot,
+.collab-status[data-status="error"] .collab-status-dot,
+.collab-status[data-status="unavailable"] .collab-status-dot {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.collab-status[data-status="offline"] .collab-status-dot {
+  background: #94a3b8;
+  box-shadow: none;
+}
+
+@keyframes collab-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2); }
+  50% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.05); }
+}
+
+.collab-avatars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.collab-avatars:empty {
+  display: none;
+}
+
+.collab-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin-left: -6px;
+  cursor: default;
+  user-select: none;
+}
+
+.collab-avatars .collab-avatar:first-child {
+  margin-left: 0;
+}
+
+.collab-avatar-me {
+  cursor: pointer;
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: -1px;
+}
+
+.collab-avatar-more {
+  background: #334155;
+  font-size: 9px;
+}
+
+/* Badge on hub cards: "Ana is editing" */
+.collab-card-editors {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px 2px 4px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #bbf7d0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.collab-card-editors .collab-avatar {
+  width: 18px;
+  height: 18px;
+  font-size: 8px;
+  border-width: 1.5px;
+  margin-left: -5px;
+}
+
+.collab-card-editors .collab-avatar:first-child {
+  margin-left: 0;
+}
+
+@media (max-width: 900px) {
+  .collab-status-label {
+    display: none;
+  }
+}
+
+.collab-invite-btn {
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 165, 250, 0.5);
+  background: rgba(59, 130, 246, 0.18);
+  color: #dbeafe;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.collab-invite-btn:hover {
+  background: rgba(59, 130, 246, 0.32);
+}

@@ -562,6 +562,9 @@
       transform: translateY(0);
     }
   </style>
+  <!-- Live PDF export (Download PDF button) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+  <script src="js/pdf-export.js" defer></script>
 </head>
 <body>
 
@@ -1214,14 +1217,14 @@
 
   <!-- Floating Action Bar at Bottom-Right Corner (Only shown when viewed directly, hidden during print or inside iframe) -->
   <div class="floating-pdf-actions no-print-btn" id="template-floating-actions">
-    <a href="SunBird_Lanka_Tours_Itinerary_Classic.pdf" download="SunBird_Lanka_Tours_Itinerary_Classic.pdf" class="fab-btn fab-download" title="Download Classic Itinerary PDF">
+    <button type="button" class="fab-btn fab-download" title="Download this itinerary as a PDF" onclick="if (window.SunBirdPdfExport) { SunBirdPdfExport.download().catch(function () { window.print(); }); } else { window.print(); }">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
         <polyline points="7 10 12 15 17 10"></polyline>
         <line x1="12" y1="15" x2="12" y2="3"></line>
       </svg>
       <span>Download PDF</span>
-    </a>
+    </button>
     <button type="button" class="fab-btn fab-print" onclick="window.print()" title="Print / Save as PDF">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 6 2 18 2 18 9"></polyline>
