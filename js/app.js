@@ -127,6 +127,9 @@
   let roomCardsContainer, touristRoomSummaryTag;
   let updateCurrencyUI, renderEmployeeProfiles, updateHotelRatingStarsUI;
 
+  // Heading the PDF templates show before an itinerary is loaded
+  const DEFAULT_DOC_TITLE = 'HOTEL ARRANGEMENTS WITH TRANSPORT SERVICES';
+
   // Initialize
   document.addEventListener('DOMContentLoaded', () => {
     cacheDOMElements();
@@ -891,9 +894,12 @@
     const activeItin = (typeof hubItineraries !== 'undefined' && hubItineraries.length > 0)
       ? hubItineraries.find(item => item.id === hubActiveItinId)
       : null;
-    const itinTitle = state.title || (activeItin ? activeItin.title : '') || 'HOTEL ARRANGEMENTS WITH TRANSPORT SERVICES';
+    const itinTitle = state.title || (activeItin ? activeItin.title : '') || DEFAULT_DOC_TITLE;
 
     return {
+      // Which itinerary this payload belongs to, so other tabs / the PDF preview
+      // never copy its title onto a different itinerary.
+      itinId: (typeof hubActiveItinId !== 'undefined') ? hubActiveItinId : null,
       title: itinTitle,
       days: daysCount,
       nights: nightsCount,
@@ -7974,6 +7980,11 @@
     return !!(screenEditor && screenEditor.style.display !== 'none');
   }
 
+  /** The PDF templates' built-in heading, used when no itinerary is loaded yet. */
+  function isPlaceholderTitle(title) {
+    return String(title || '').trim().toUpperCase() === DEFAULT_DOC_TITLE;
+  }
+
   /**
    * Many editor actions (e.g. changing the number of days) only update the on-screen
    * state. With team sync on, save the open itinerary shortly after every change so
@@ -9021,21 +9032,29 @@
     }
 
     // 8. Two-way synchronization message listener from PDF iframe
+    //    Only accept a title the user typed in OUR preview while editing, never the
+    //    template's placeholder (that used to rename itineraries for the whole team).
     window.addEventListener('message', (e) => {
       if (e.data && e.data.type === 'SUNBIRD_TITLE_UPDATED' && e.data.title) {
+        const previewFrame = document.getElementById('pdf-preview-iframe');
+        if (!previewFrame || e.source !== previewFrame.contentWindow) return;
         const newTitle = e.data.title.trim();
-        if (newTitle && hubActiveItinId) {
+        if (newTitle && hubActiveItinId && isEditorVisible() && !isPlaceholderTitle(newTitle)) {
           updateItineraryTitle(hubActiveItinId, newTitle, false);
         }
       }
     });
 
     // 10. Multi-tab synchronization via localStorage storage event
+    //    Only when the other tab is editing the SAME itinerary; a tab that is still
+    //    loading (or on another itinerary) must not rename the one open here.
     window.addEventListener('storage', (e) => {
       if (e.key === 'sunbird_live_itinerary' && e.newValue) {
         try {
           const data = JSON.parse(e.newValue);
-          if (data && data.title && hubActiveItinId) {
+          if (data && data.title && data.itinId && hubActiveItinId &&
+              data.itinId === hubActiveItinId && isEditorVisible() &&
+              !isPlaceholderTitle(data.title)) {
             updateItineraryTitle(hubActiveItinId, data.title, false);
           }
         } catch(err) {}
