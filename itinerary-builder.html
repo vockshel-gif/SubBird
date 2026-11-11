@@ -846,7 +846,7 @@ body {
 <!-- html2pdf.js for client-side PDF generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <!-- SunBird Firebase Service -->
-<script src="js/firebase-service.js"></script>
+<script src="js/firebase-service.js?v=20261111d"></script>
 </head>
 <body>
 
@@ -1909,7 +1909,7 @@ body {
     listWrap.innerHTML = '';
 
     try {
-      builderRecords = await window.SunBirdFirebase.listRecords();
+      builderRecords = await window.SunBirdFirebase.listRecordSummaries();
       updateFilterCounters();
       renderBuilderList();
     } catch (err) {

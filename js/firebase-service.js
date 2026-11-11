@@ -216,7 +216,8 @@
   }
 
   /**
-   * Lists all published itineraries and client links from Firebase Realtime Database
+   * Lists all published itineraries and client links from Firebase Realtime Database.
+   * Downloads every full record, PDFs included: for link lists use listRecordSummaries().
    * @returns {Promise<Array<Object>>}
    */
   async function listRecords() {
@@ -248,6 +249,69 @@
       console.error('Error fetching itinerary records from Firebase:', err);
       throw err;
     }
+  }
+
+  // Small fields the link lists show. Everything else in a record (above all
+  // pdfBase64, which holds the whole PDF) is left on the server.
+  const SUMMARY_FIELDS = ['title', 'type', 'fileName', 'clientName', 'createdAt', 'updatedAt'];
+
+  /**
+   * Returns the ids of all published links without downloading the records.
+   * Uses the REST API's shallow mode, which sends only the keys (a few bytes per link)
+   * instead of every stored PDF.
+   * @returns {Promise<Array<string>>}
+   */
+  async function listRecordIds() {
+    if (!initFirebase()) throw new Error('Firebase could not be initialized.');
+    const res = await fetch(`${firebaseConfig.databaseURL}/itineraries.json?shallow=true`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Could not list published links (HTTP ${res.status}).`);
+    const keys = await res.json();
+    return (keys && typeof keys === 'object') ? Object.keys(keys) : [];
+  }
+
+  /** Number of published links (one tiny request). */
+  async function countRecords() {
+    return (await listRecordIds()).length;
+  }
+
+  /**
+   * Lists published links with only the fields the link lists need
+   * (title, type, file name, client name, dates), newest first.
+   * The PDFs themselves are not downloaded.
+   * @returns {Promise<Array<Object>>}
+   */
+  async function listRecordSummaries() {
+    if (!initFirebase()) throw new Error('Firebase could not be initialized.');
+
+    let ids;
+    try {
+      ids = await listRecordIds();
+    } catch (err) {
+      // Shallow listing unavailable: fall back to the full read, but keep only the summaries.
+      console.warn('Shallow link listing failed, loading full records instead:', err.message || err);
+      const full = await listRecords();
+      return full.map((rec) => {
+        const summary = { id: rec.id };
+        SUMMARY_FIELDS.forEach((f) => { if (rec[f] !== undefined) summary[f] = rec[f]; });
+        return summary;
+      });
+    }
+
+    const summaries = await Promise.all(ids.map(async (id) => {
+      const values = await Promise.all(SUMMARY_FIELDS.map((f) =>
+        database.ref(`itineraries/${id}/${f}`).once('value').then((s) => s.val())
+      ));
+      const summary = { id: id };
+      let found = false;
+      SUMMARY_FIELDS.forEach((f, i) => {
+        if (values[i] !== null && values[i] !== undefined) { summary[f] = values[i]; found = true; }
+      });
+      return found ? summary : null;
+    }));
+
+    const records = summaries.filter(Boolean);
+    records.sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
+    return records;
   }
 
   /**
@@ -390,6 +454,9 @@
     saveRecord: saveRecord,
     getRecord: getRecord,
     listRecords: listRecords,
+    listRecordIds: listRecordIds,
+    countRecords: countRecords,
+    listRecordSummaries: listRecordSummaries,
     deleteRecord: deleteRecord,
     updateRecordPDF: updateRecordPDF,
     updateRecordMeta: updateRecordMeta,

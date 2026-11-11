@@ -7259,13 +7259,8 @@
     // Load itineraries from storage
     loadItinerariesFromStorage();
 
-    // Initial silent query of cloud database to show live badge count
-    if (window.SunBirdFirebase) {
-      window.SunBirdFirebase.listRecords().then((records) => {
-        publishedLinks = records || [];
-        updateLinkCounters();
-      }).catch(() => {});
-    }
+    // Show how many client links are published (fetches only the ids, not the PDFs)
+    refreshLinkCountBadge();
 
     // Check saved active itinerary or default
     try {
@@ -8489,13 +8484,8 @@
 
     showToast('Client link generated successfully!');
 
-    // Update cloud link cache and counters
-    if (window.SunBirdFirebase) {
-      window.SunBirdFirebase.listRecords().then((records) => {
-        publishedLinks = records || [];
-        updateLinkCounters();
-      }).catch(() => {});
-    }
+    // Update the published-links count (the Link Manager reloads its list when opened)
+    refreshLinkCountBadge();
   }
 
   /* ── SunBird Cloud Link Manager Functions ── */
@@ -8524,7 +8514,7 @@
     if (linkMgrList) linkMgrList.innerHTML = '';
 
     try {
-      publishedLinks = await window.SunBirdFirebase.listRecords();
+      publishedLinks = await window.SunBirdFirebase.listRecordSummaries();
       updateLinkCounters();
       renderLinkManagerList();
     } catch (err) {
@@ -8544,6 +8534,15 @@
     if (countCustomEl) countCustomEl.textContent = custom;
     if (countGenEl) countGenEl.textContent = gen;
 
+    updateLinkCountBadge(total);
+  }
+
+  function refreshLinkCountBadge() {
+    if (!window.SunBirdFirebase) return;
+    window.SunBirdFirebase.countRecords().then(updateLinkCountBadge).catch(() => {});
+  }
+
+  function updateLinkCountBadge(total) {
     if (hubLinkMgrCountBadge) {
       if (total > 0) {
         hubLinkMgrCountBadge.textContent = total;
