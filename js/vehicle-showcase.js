@@ -246,9 +246,38 @@
   }
 
   /**
+   * On the website the embedded model bundle (js/vehicles-data.js, ~3 MB) is no longer
+   * loaded up front, so the itinerary hub appears quickly. Fetch it once the page has
+   * finished loading; if that fails, fall back to the separate model files below.
+   */
+  let vehicleDataRequested = false;
+  function loadVehicleDataInBackground() {
+    return new Promise((resolve, reject) => {
+      const start = () => {
+        const s = document.createElement('script');
+        s.src = 'js/vehicles-data.js';
+        s.async = true;
+        s.onload = () => (window.VEHICLE_DATA ? resolve() : reject(new Error('VEHICLE_DATA missing')));
+        s.onerror = () => reject(new Error('Could not load vehicles-data.js'));
+        document.head.appendChild(s);
+      };
+      if (document.readyState === 'complete') start();
+      else window.addEventListener('load', start, { once: true });
+    });
+  }
+
+  /**
    * Preloads both Car and Van models into memory
    */
   function preloadVehicleModels() {
+    if (!window.VEHICLE_DATA && !window.SUNBIRD_OFFLINE && !vehicleDataRequested) {
+      vehicleDataRequested = true;
+      loadVehicleDataInBackground()
+        .catch((err) => console.warn('Vehicle data bundle unavailable, loading model files instead:', err))
+        .then(() => preloadVehicleModels());
+      return;
+    }
+
     // 1. Preload Car (Prius GLB)
     if (window.VEHICLE_DATA && window.VEHICLE_DATA.priusGlbBase64 && THREE.GLTFLoader) {
       try {

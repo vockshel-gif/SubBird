@@ -1503,8 +1503,17 @@
   <script src="js/lib/OBJLoader.js"></script>
   <!-- Sri Lanka High-Resolution Geographic Data & Coordinates -->
   <script src="js/sri-lanka-geo.js"></script>
-  <!-- High-Resolution Georeferenced Offline Map Textures -->
-  <script src="js/map-textures.js"></script>
+  <!-- Big offline bundles (map textures 3 MB, vehicle models 3 MB).
+       Opened as a file (no web server): load them up front as before.
+       On the website they no longer block start-up: the map loads its texture
+       images in the background (assets/*.jpg) and the vehicle viewer fetches
+       js/vehicles-data.js after the page has loaded. -->
+  <script>
+    window.SUNBIRD_OFFLINE = (window.location.protocol === 'file:');
+    if (window.SUNBIRD_OFFLINE) {
+      document.write('<script src="js/map-textures.js"><\/script><script src="js/vehicles-data.js"><\/script>');
+    }
+  </script>
   <!-- Sri Lanka Hotel Intelligence Database (91 Hotels Ã— 34 Destinations) -->
   <script src="js/hotels-data.js"></script>
   <!-- Authentic Real Road Network Polyline Geometry (OSRM / OpenStreetMap 561 Pairs) -->
@@ -1513,16 +1522,15 @@
   <script src="js/sri-lanka-routes.js"></script>
   <!-- 3D Tactical Cyber Map Visualization Engine -->
   <script src="js/map3d.js"></script>
-  <!-- 3D Vehicle Models Offline Data (Zero-CORS Embedded) -->
-  <script src="js/vehicles-data.js"></script>
   <!-- 3D Interactive Vehicle Showcase & Pax Selector Module -->
-  <script src="js/vehicle-showcase.js"></script>
+  <script src="js/vehicle-showcase.js?v=20261111c"></script>
   <!-- Firebase Compat SDKs (App, Storage, Realtime Database) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <!-- HTML2PDF CDN for Client PDF Generation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- HTML2PDF CDN for Client PDF Generation (only needed when publishing a link,
+       so it loads in the background instead of delaying start-up) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" async></script>
   <!-- SunBird Firebase Cloud Service -->
   <script src="js/firebase-service.js?v=20261111b"></script>
   <script src="js/collab-service.js?v=20261111b"></script>
